@@ -1,0 +1,2 @@
+SELECT id, ticker_name, ticker, instrument_type, figi, isin, min_price_increment, lot, currency, memo
+	FROM public.instruments WHERE LOWER(ticker) LIKE '%' || LOWER('GAz') || '%';

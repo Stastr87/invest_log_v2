@@ -1,0 +1,18 @@
+-- Table: public.accounts
+
+-- DROP TABLE IF EXISTS public.accounts;
+
+CREATE TABLE IF NOT EXISTS public.accounts
+(
+    account_id numeric NOT NULL,
+    account_name character varying COLLATE pg_catalog."default",
+    brocker_name character varying COLLATE pg_catalog."default",
+    CONSTRAINT accounts_pkey PRIMARY KEY (account_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.accounts
+    OWNER to postgres;
+
+GRANT ALL ON TABLE public.accounts TO postgres WITH GRANT OPTION;

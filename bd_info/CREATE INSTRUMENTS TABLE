@@ -1,0 +1,22 @@
+-- Table: public.instruments
+
+-- DROP TABLE IF EXISTS public.instruments;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE TABLE IF NOT EXISTS public.instruments
+(
+    id uuid DEFAULT uuid_generate_v4 (),
+    ticker_name text COLLATE pg_catalog."default",
+    ticker text COLLATE pg_catalog."default",
+    instrument_type character varying COLLATE pg_catalog."default",
+    figi character varying COLLATE pg_catalog."default",
+    isin character varying COLLATE pg_catalog."default",
+    min_price_increment character varying COLLATE pg_catalog."default",
+    lot integer,
+    currency character varying COLLATE pg_catalog."default",
+    CONSTRAINT id PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.instruments
+    OWNER to postgres;

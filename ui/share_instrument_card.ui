@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1004</width>
+    <height>840</height>
+   </rect>
+  </property>
+  <property name="font">
+   <font>
+    <kerning>false</kerning>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QFrame" name="backFrame">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>981</width>
+     <height>821</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border: solid 1px;
+border-radius: 7px;
+background-color: rgb(235,235,235);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QTextEdit" name="description">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>130</y>
+      <width>961</width>
+      <height>150</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>421</width>
+      <height>150</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left: 10px;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Описание</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="share_instrument_card_label">
+    <property name="geometry">
+     <rect>
+      <x>19</x>
+      <y>11</y>
+      <width>961</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);
+font-weight:bolt;
+font-size:14pt;</string>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="text">
+     <string>share_instrument_card</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::PlainText</enum>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="indent">
+     <number>2</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="figi_label">
+    <property name="geometry">
+     <rect>
+      <x>19</x>
+      <y>39</y>
+      <width>961</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);</string>
+    </property>
+    <property name="text">
+     <string>figi</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="price_label">
+    <property name="geometry">
+     <rect>
+      <x>24</x>
+      <y>68</y>
+      <width>63</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);</string>
+    </property>
+    <property name="text">
+     <string>Стоимость</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="Instrument_price">
+    <property name="geometry">
+     <rect>
+      <x>21</x>
+      <y>90</y>
+      <width>169</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>169</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::CustomContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+font-size:12pt;
+padding-left: 5px;
+background-color:rgb(245, 245, 245);</string>
+    </property>
+    <property name="text">
+     <string>Цена</string>
+    </property>
+    <property name="placeholderText">
+     <string>Цена</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="instrument_quantity">
+    <property name="geometry">
+     <rect>
+      <x>196</x>
+      <y>90</y>
+      <width>169</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>169</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::CustomContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+font-size:12pt;
+padding-left: 5px;
+background-color:rgb(245, 245, 245);</string>
+    </property>
+    <property name="text">
+     <string>Количество</string>
+    </property>
+    <property name="placeholderText">
+     <string>Количество бумаг в портфеле</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="qty_label">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>68</y>
+      <width>65</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);</string>
+    </property>
+    <property name="text">
+     <string>Количество</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="total_label">
+    <property name="geometry">
+     <rect>
+      <x>376</x>
+      <y>68</y>
+      <width>112</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);</string>
+    </property>
+    <property name="text">
+     <string>Итоговая стоимость</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="total_price">
+    <property name="geometry">
+     <rect>
+      <x>371</x>
+      <y>90</y>
+      <width>179</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>179</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::CustomContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+font-size:12pt;
+padding-left: 5px;
+background-color:rgb(245, 245, 245);</string>
+    </property>
+    <property name="text">
+     <string>Итоговая стоимость</string>
+    </property>
+    <property name="placeholderText">
+     <string>Итоговая стоимость</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="weight_value">
+    <property name="geometry">
+     <rect>
+      <x>556</x>
+      <y>90</y>
+      <width>179</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>179</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::CustomContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+font-size:12pt;
+padding-left: 5px;
+background-color:rgb(245, 245, 245);</string>
+    </property>
+    <property name="text">
+     <string>%</string>
+    </property>
+    <property name="placeholderText">
+     <string>Цена</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="weight_value_lable">
+    <property name="geometry">
+     <rect>
+      <x>561</x>
+      <y>68</y>
+      <width>120</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);</string>
+    </property>
+    <property name="text">
+     <string>Процент в портфеле</string>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="start_date">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>79</x>
+      <y>711</y>
+      <width>110</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>33</height>
+     </size>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::NoContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 5px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(230, 230, 230);
+font-size:12pt;
+</string>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="end_date">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>209</x>
+      <y>711</y>
+      <width>119</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>33</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 5px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(230, 230, 230);
+font-size:12pt;</string>
+    </property>
+    <property name="calendarPopup">
+     <bool>true</bool>
+    </property>
+    <property name="timeSpec">
+     <enum>Qt::LocalTime</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="space_label">
+    <property name="geometry">
+     <rect>
+      <x>195</x>
+      <y>711</y>
+      <width>16</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);
+font-weight:bolt;
+font-size:14pt;</string>
+    </property>
+    <property name="text">
+     <string>-</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="period_label">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>719</y>
+      <width>59</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>12</pointsize>
+      <kerning>false</kerning>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);
+font-size:12pt;</string>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="text">
+     <string>Период:</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::PlainText</enum>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="indent">
+     <number>2</number>
+    </property>
+   </widget>
+   <widget class="QWebEngineView" name="chart_widget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>290</y>
+      <width>961</width>
+      <height>411</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">body {background-color: rgb(235,235,235);
+}</string>
+    </property>
+    <property name="url">
+     <url>
+      <string>about:blank</string>
+     </url>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="save_button">
+    <property name="geometry">
+     <rect>
+      <x>489</x>
+      <y>786</y>
+      <width>171</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 7px;
+width: 230px;
+height: 30 px;
+color: rgb(89, 89, 89);
+background-color:rgb(220, 220, 220);
+font-size:12pt;}
+QPushButton:hover {
+background-color:rgb(225,225, 225);
+border: 1px solid;
+border-color: rgb(220, 220,220);}
+QPushButton:pressed{
+background-color:rgb(215, 215,215);
+border: 2px solid;
+border-bottom-color:  rgb(190,190,190);
+border-top-color: rgb(170,170,170);
+border-left-color: rgb(170,170,170);
+border-right-color:  rgb(190,190,190);}
+
+
+</string>
+    </property>
+    <property name="text">
+     <string>Сохранить</string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icons/icons/save_as_FILL0_wght400_GRAD0_opsz48.svg</normaloff>:/icons/icons/save_as_FILL0_wght400_GRAD0_opsz48.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QLabel" name="chart_type_label">
+    <property name="geometry">
+     <rect>
+      <x>12</x>
+      <y>755</y>
+      <width>94</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>12</pointsize>
+      <kerning>false</kerning>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);
+font-size:12pt;</string>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="text">
+     <string>Тип графика</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::PlainText</enum>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="indent">
+     <number>2</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="cancel_button">
+    <property name="geometry">
+     <rect>
+      <x>289</x>
+      <y>786</y>
+      <width>171</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 7px;
+width: 230px;
+height: 30 px;
+color: rgb(89, 89, 89);
+background-color:rgb(220, 220, 220);
+font-size:12pt;}
+QPushButton:hover {
+background-color:rgb(225,225, 225);
+border: 1px solid;
+border-color: rgb(220, 220,220);}
+QPushButton:pressed{
+background-color:rgb(215, 215,215);
+border: 2px solid;
+border-bottom-color:  rgb(190,190,190);
+border-top-color: rgb(170,170,170);
+border-left-color: rgb(170,170,170);
+border-right-color:  rgb(190,190,190);}
+
+
+</string>
+    </property>
+    <property name="text">
+     <string>Назад</string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>:/icons/icons/undo_FILL0_wght400_GRAD0_opsz48.svg</normaloff>:/icons/icons/undo_FILL0_wght400_GRAD0_opsz48.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ohlc_button">
+    <property name="geometry">
+     <rect>
+      <x>239</x>
+      <y>749</y>
+      <width>111</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>81</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 7px;
+width: 230px;
+height: 30 px;
+color: rgb(89, 89, 89);
+background-color:rgb(220, 220, 220);
+font-size:12pt;}
+QPushButton:hover {
+background-color:rgb(225,225, 225);
+border: 1px solid;
+border-color: rgb(220, 220,220);}
+QPushButton:pressed{
+background-color:rgb(215, 215,215);
+border: 2px solid;
+border-bottom-color:  rgb(190,190,190);
+border-top-color: rgb(170,170,170);
+border-left-color: rgb(170,170,170);
+border-right-color:  rgb(190,190,190);}
+
+
+</string>
+    </property>
+    <property name="text">
+     <string>OHLC</string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>icons/candlestick_chart_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/candlestick_chart_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="line_chart_button">
+    <property name="geometry">
+     <rect>
+      <x>119</x>
+      <y>749</y>
+      <width>111</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>81</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 7px;
+width: 230px;
+height: 30 px;
+color: rgb(89, 89, 89);
+background-color:rgb(220, 220, 220);
+font-size:12pt;}
+QPushButton:hover {
+background-color:rgb(225,225, 225);
+border: 1px solid;
+border-color: rgb(220, 220,220);}
+QPushButton:pressed{
+background-color:rgb(215, 215,215);
+border: 2px solid;
+border-bottom-color:  rgb(190,190,190);
+border-top-color: rgb(170,170,170);
+border-left-color: rgb(170,170,170);
+border-right-color:  rgb(190,190,190);}
+
+
+</string>
+    </property>
+    <property name="text">
+     <string>Линия</string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>icons/show_chart_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/show_chart_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebEngineView</class>
+   <extends>QWidget</extends>
+   <header location="global">QtWebEngineWidgets/QWebEngineView</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="instrument_card_v2.qrc"/>
+ </resources>
+ <connections/>
+</ui>

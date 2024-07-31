@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/undo_FILL0_wght400_GRAD0_opsz48.svg</file>
+    <file>icons/save_as_FILL0_wght400_GRAD0_opsz48.svg</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,12 @@
+venv/
+trash/
+top_secret/
+temp_data/
+old/
+logs/
+examples/
+dist/
+.vscode/
+BACKUP/
+candles/
+__pycache__

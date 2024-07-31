@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>495</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QFrame" name="backFrame">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>581</width>
+     <height>471</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border: solid 1px;
+border-radius: 7px;
+background-color: rgb(235,235,235);</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>18</x>
+      <y>10</y>
+      <width>541</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(89, 89, 89);
+font-weight:bolt;
+font-size:14pt;</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Box</enum>
+    </property>
+    <property name="text">
+     <string>Transaction_form</string>
+    </property>
+    <property name="textFormat">
+     <enum>Qt::PlainText</enum>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+    <property name="indent">
+     <number>2</number>
+    </property>
+   </widget>
+   <widget class="QDateTimeEdit" name="dateTimeEdit">
+    <property name="geometry">
+     <rect>
+      <x>12</x>
+      <y>64</y>
+      <width>134</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>121</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left:5px;</string>
+    </property>
+    <property name="buttonSymbols">
+     <enum>QAbstractSpinBox::NoButtons</enum>
+    </property>
+    <property name="dateTime">
+     <datetime>
+      <hour>8</hour>
+      <minute>0</minute>
+      <second>0</second>
+      <year>2023</year>
+      <month>1</month>
+      <day>1</day>
+     </datetime>
+    </property>
+    <property name="date">
+     <date>
+      <year>2023</year>
+      <month>1</month>
+      <day>1</day>
+     </date>
+    </property>
+    <property name="time">
+     <time>
+      <hour>8</hour>
+      <minute>0</minute>
+      <second>0</second>
+     </time>
+    </property>
+    <property name="currentSection">
+     <enum>QDateTimeEdit::DaySection</enum>
+    </property>
+    <property name="displayFormat">
+     <string>dd.MM.yyyy HH:mm</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="Transactio_type">
+    <property name="geometry">
+     <rect>
+      <x>152</x>
+      <y>64</y>
+      <width>71</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>71</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">padding-left: 10px;
+border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;</string>
+    </property>
+    <property name="frame">
+     <bool>true</bool>
+    </property>
+    <item>
+     <property name="text">
+      <string>Buy</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Sell</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="Save_all">
+    <property name="geometry">
+     <rect>
+      <x>278</x>
+      <y>432</y>
+      <width>171</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 7px;
+width: 230px;
+height: 30 px;
+color: rgb(89, 89, 89);
+background-color:rgb(220, 220, 220);
+font-size:12pt;}
+QPushButton:hover {
+background-color:rgb(225,225, 225);
+border: 1px solid;
+border-color: rgb(220, 220,220);}
+QPushButton:pressed{
+background-color:rgb(215, 215,215);
+border: 2px solid;
+border-bottom-color:  rgb(190,190,190);
+border-top-color: rgb(170,170,170);
+border-left-color: rgb(170,170,170);
+border-right-color:  rgb(190,190,190);}
+
+
+</string>
+    </property>
+    <property name="text">
+     <string>Сохранить</string>
+    </property>
+    <property name="icon">
+     <iconset resource="transaction_form.qrc">
+      <normaloff>:/icons/icons/save_as_FILL0_wght400_GRAD0_opsz48.svg</normaloff>:/icons/icons/save_as_FILL0_wght400_GRAD0_opsz48.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="Brocker">
+    <property name="geometry">
+     <rect>
+      <x>229</x>
+      <y>64</y>
+      <width>131</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>131</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>241</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left: 10px;</string>
+    </property>
+    <property name="currentIndex">
+     <number>-1</number>
+    </property>
+    <property name="placeholderText">
+     <string>Брокер</string>
+    </property>
+    <item>
+     <property name="text">
+      <string>Тиньков</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>БКС</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QTextEdit" name="description">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>189</y>
+      <width>551</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>421</width>
+      <height>150</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left: 10px;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Описание</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Cancel">
+    <property name="geometry">
+     <rect>
+      <x>101</x>
+      <y>432</y>
+      <width>171</width>
+      <height>30</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>171</width>
+      <height>30</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+border-radius: 7px;
+width: 230px;
+height: 30 px;
+color: rgb(89, 89, 89);
+background-color:rgb(220, 220, 220);
+font-size:12pt;}
+QPushButton:hover {
+background-color:rgb(225,225, 225);
+border: 1px solid;
+border-color: rgb(220, 220,220);}
+QPushButton:pressed{
+background-color:rgb(215, 215,215);
+border: 2px solid;
+border-bottom-color:  rgb(190,190,190);
+border-top-color: rgb(170,170,170);
+border-left-color: rgb(170,170,170);
+border-right-color:  rgb(190,190,190);}
+
+
+</string>
+    </property>
+    <property name="text">
+     <string>Отмена</string>
+    </property>
+    <property name="icon">
+     <iconset resource="transaction_form.qrc">
+      <normaloff>:/icons/icons/undo_FILL0_wght400_GRAD0_opsz48.svg</normaloff>:/icons/icons/undo_FILL0_wght400_GRAD0_opsz48.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="ticker_edit">
+    <property name="geometry">
+     <rect>
+      <x>12</x>
+      <y>106</y>
+      <width>197</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>197</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>197</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::CustomContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+font-size:12pt;
+padding-left: 5px;
+background-color:rgb(245, 245, 245);</string>
+    </property>
+    <property name="placeholderText">
+     <string>Тикер</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="volume_edit">
+    <property name="geometry">
+     <rect>
+      <x>198</x>
+      <y>149</y>
+      <width>90</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>90</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left: 5px;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Объем</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="price_edit">
+    <property name="geometry">
+     <rect>
+      <x>89</x>
+      <y>149</y>
+      <width>100</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>100</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>100</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left:5px;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Цена</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="fee_edit">
+    <property name="geometry">
+     <rect>
+      <x>294</x>
+      <y>149</y>
+      <width>90</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>90</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left: 5px;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Комиссия</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="Brocker_account">
+    <property name="geometry">
+     <rect>
+      <x>366</x>
+      <y>64</y>
+      <width>201</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>161</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>241</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left: 10px;</string>
+    </property>
+    <property name="currentText">
+     <string/>
+    </property>
+    <property name="currentIndex">
+     <number>-1</number>
+    </property>
+    <property name="insertPolicy">
+     <enum>QComboBox::InsertAtBottom</enum>
+    </property>
+    <property name="placeholderText">
+     <string>Счет</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="Currency">
+    <property name="geometry">
+     <rect>
+      <x>13</x>
+      <y>149</y>
+      <width>70</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>70</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left:5px;</string>
+    </property>
+    <property name="placeholderText">
+     <string>Валюта</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="instrument_name">
+    <property name="geometry">
+     <rect>
+      <x>215</x>
+      <y>106</y>
+      <width>351</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>311</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::CustomContextMenu</enum>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+font-size:12pt;
+padding-left: 5px;
+background-color:rgb(245, 245, 245);</string>
+    </property>
+    <property name="placeholderText">
+     <string>Название инструмента</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="nkd_edit">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>149</y>
+      <width>90</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>34</height>
+     </size>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>90</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid;
+border-radius: 7px;
+border-color:rgb(230, 230, 230);
+color: rgb(89, 89, 89);
+background-color:rgb(245, 245, 245);
+font-size:12pt;
+padding-left: 5px;</string>
+    </property>
+    <property name="placeholderText">
+     <string>НКД</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources>
+  <include location="transaction_form.qrc"/>
+ </resources>
+ <connections/>
+</ui>
