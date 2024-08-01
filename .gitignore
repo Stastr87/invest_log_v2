@@ -12,3 +12,4 @@ candles/
 __pycache__
 /auth/key.json
 auth/key.json
+auth/test_get_token.py
