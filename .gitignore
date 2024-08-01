@@ -10,3 +10,4 @@ dist/
 BACKUP/
 candles/
 __pycache__
+auth/key.json
