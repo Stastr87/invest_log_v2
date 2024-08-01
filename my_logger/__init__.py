@@ -2,7 +2,7 @@ import logging
 import sys
 import os
 #Добавим папку уровнем выше в пространство имен
-new_work_dir=os.path.abspath(os.path.join(__file__ ,"../.."))
+new_work_dir = os.path.abspath(os.path.join(__file__ ,"../.."))
 sys.path.append(new_work_dir)
 
 import config
@@ -30,14 +30,15 @@ def setup_applevel_logger(logger_name = APP_LOGGER_NAME, file_name = None):
     formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
     sh = logging.StreamHandler(sys.stdout)
     sh.setFormatter(formatter)
-    logger.handlers.clear()
+    #logger.handlers.clear()
     logger.addHandler(sh)
 
     if file_name:
         if not os.path.isdir('logs'):
             os.mkdir('logs')
-        fh = logging.FileHandler(os.path.abspath(os.path.join('logs', file_name)))
-        print(f"my_logger add data to file: {os.path.abspath(os.path.join('logs', file_name))}")
+        log_file_path = os.path.abspath(os.path.join('logs', file_name))  
+        fh = logging.FileHandler(log_file_path)
+        print(f"my_logger add data to file: {log_file_path}")
         fh.setFormatter(formatter)
         logger.addHandler(fh)
     return logger
