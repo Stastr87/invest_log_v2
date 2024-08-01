@@ -3,6 +3,8 @@ import json
 import os
 #import logging
 
+
+
 class Token(object):
     def __init__(self):
         self.access_token=self.get_trading_token()
