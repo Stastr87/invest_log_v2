@@ -15,7 +15,7 @@ from sql_lib.script_normalizer import ScriptNormalizer
 from pprint import pprint
 import shelve
 from pathlib import Path
-from multipledispatch import dispatch
+#from multipledispatch import dispatch
 
 import my_logger
 log = my_logger.setup_applevel_logger(file_name = 'data_updater.log')

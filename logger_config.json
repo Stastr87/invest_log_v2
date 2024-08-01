@@ -1,5 +1,5 @@
 {
     "app_logger_name": "InvestLog",
-    "level": "Info",
+    "level": "debug",
     "path":null
 }
