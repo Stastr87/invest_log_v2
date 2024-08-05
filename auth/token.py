@@ -10,7 +10,7 @@ class Token(object):
 
     def get_trading_token(self):
         #Устаревший способ хранить в файле
-
+        token = None
         try:
             if not token:
                 # возьмем токен из переменных окружения
