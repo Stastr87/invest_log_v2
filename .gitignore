@@ -13,3 +13,5 @@ __pycache__
 /auth/key.json
 auth/key.json
 auth/test_get_token.py
+.DS_Store
+test.py
