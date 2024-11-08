@@ -42,10 +42,12 @@ import temp_data_util
 
 import config
 logger_config = config.get_logger_config()
+
 if 'wind' in platform.system():
     logger_path = logger_config['path']
 else:
     logger_path = logger_config['alternative_path']
+
 main_log_file = logger_config['main_window']['name']
 file_mode = logger_config['main_window']['mode']
 logger_level = logger_config['main_window']['level']
@@ -68,7 +70,10 @@ if logger_level == None:
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
-fh = logging.FileHandler(filename=os.path.join(logger_path, main_log_file), mode=file_mode, encoding='utf-8')
+fh = logging.FileHandler(filename=os.path.join(logger_path,
+                                               main_log_file),
+                                               mode=file_mode,
+                                               encoding='utf-8')
 fh.setFormatter(formatter)
 log_main.handlers.clear()
 log_main.addHandler(sh)

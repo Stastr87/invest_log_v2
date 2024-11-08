@@ -34,7 +34,7 @@ sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
 fh = logging.FileHandler(filename=os.path.join(log_path,
                                                log_file_name),
-                                               mode=file_mode, 
+                                               mode=file_mode,
                                                encoding='utf-8')
 fh.setFormatter(formatter)
 log_auth.handlers.clear()
@@ -44,8 +44,6 @@ log_auth.addHandler(fh)
 class Token(object):
     def __init__(self):
         self.access_token = self.get_trading_token()
-        # log_auth.debug(f'{__name__} -> init success!!!')
-
 
     def get_trading_token(self):
         #Устаревший способ хранить в файле
@@ -60,11 +58,11 @@ class Token(object):
                     raise ValueError('Возвращено пустое значение')
                 else:
                     return token
-        
+
         except:
             log_auth.debug(f'{__name__}: Ошибка получения токена из переменных окружения', exc_info=True)
             # print(f'{__name__}: Ошибка получения токена из переменных окружения')
-        
+
         log_auth.debug(f'try to get token from file...')
         try:
             #Устаревший способ хранить в файле
@@ -78,7 +76,7 @@ class Token(object):
             log_auth.debug(f'get token from file success')
             log_auth.debug(f'token {token[:5]}...')
             return token
-        
+
         except:
             log_auth.debug(f'{__name__}: Ошибка получения токена из файла', exc_info=True)
             # print(f'{__name__}: Ошибка получения токена из из файла')
