@@ -5,6 +5,7 @@ import config
 import sys
 import re
 import os
+import platform
 import shelve
 from datetime import datetime
 from datetime import timedelta
@@ -41,7 +42,10 @@ import temp_data_util
 
 import config
 logger_config = config.get_logger_config()
-logger_path = logger_config['path']
+if 'wind' in platform.system():
+    logger_path = logger_config['path']
+else:
+    logger_path = logger_config['alternative_path']
 main_log_file = logger_config['main_window']['name']
 file_mode = logger_config['main_window']['mode']
 logger_level = logger_config['main_window']['level']

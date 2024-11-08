@@ -1,5 +1,4 @@
-import os
-import sys
+import platform, sys, os
 from PySide6.QtGui import QColor
 from PySide6.QtCore import QDate, QTime, Qt, Signal
 from PySide6.QtWidgets import (QWidget,QTableWidget, QTableWidgetItem, QButtonGroup,
@@ -14,10 +13,45 @@ from auth.token import Token
 
 import config
 logger_config = config.get_logger_config()
-logger_path = logger_config['path']
-main_log_file = logger_config['history_window']['name']
+
+if 'wind' in platform.system():
+    history_window_log_path = logger_config['path']
+else:
+    history_window_log_path = logger_config['alternative_path']
+
+history_window_log_file = logger_config['history_window']['name']
 file_mode = logger_config['history_window']['mode']
 logger_level = logger_config['history_window']['level']
+
+import logging
+# Настройка логирования
+log_history_window = logging.getLogger(__name__)
+if logger_level.lower() == 'debug':
+    log_history_window.setLevel(logging.DEBUG)
+if logger_level.lower() == 'error':
+    log_history_window.setLevel(logging.ERROR)
+if logger_level.lower() == 'info':
+    log_history_window.setLevel(logging.INFO)
+if logger_level.lower() == 'warning':
+    log_history_window.setLevel(logging.WARNING)
+if logger_level.lower() == 'critical':
+    log_history_window.setLevel(logging.CRITICAL)
+if logger_level == None:
+    log_history_window.setLevel(logging.NOTSET)
+
+formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+sh = logging.StreamHandler(sys.stdout)
+sh.setFormatter(formatter)
+fh = logging.FileHandler(filename=os.path.join(history_window_log_path, 
+                                               history_window_log_file), 
+                         mode=file_mode,
+                         encoding='utf-8')
+fh.setFormatter(formatter)
+log_history_window.handlers.clear()
+log_history_window.addHandler(sh)
+log_history_window.addHandler(fh)
+
+
 
 from services.data_converter import DataConverter
 # Создадим экземпляр класса DataConverter() для последующей конвертации данных в коде
@@ -62,9 +96,9 @@ class HistoryWindow(QWidget):
                                             u"border-color: rgb(205, 205, 205);}")
 
         # Описание сигналов для элементов интерфейса
-        operations_period_radio_button=self.ui.operations_period
-        all_operations_radio_button=self.ui.all_operations
-        radio_button_group=QButtonGroup()
+        operations_period_radio_button = self.ui.operations_period
+        all_operations_radio_button = self.ui.all_operations
+        radio_button_group = QButtonGroup()
         radio_button_group.addButton(all_operations_radio_button,1)
         radio_button_group.addButton(operations_period_radio_button,2)
         operations_period_radio_button.setChecked(True)
@@ -91,11 +125,11 @@ class HistoryWindow(QWidget):
         button_brocker_query.clicked.connect(self.the_button_was_clicked)
         button_brocker_query.clicked.connect(self.create_operation_info_table)
 
-        button_Edit_transaction=self.ui.Edit_transaction
+        button_Edit_transaction = self.ui.Edit_transaction
         button_Edit_transaction.clicked.connect(self.the_button_was_clicked)
         button_Edit_transaction.clicked.connect(self.edit_transaction_from_local_db)
 
-        button_add_transaction_from_table=self.ui.add_transaction_from_table
+        button_add_transaction_from_table = self.ui.add_transaction_from_table
         button_add_transaction_from_table.clicked.connect(self.the_button_was_clicked)
         button_add_transaction_from_table.clicked.connect(self.edit_transaction_with_safe_new_one)
 
@@ -108,13 +142,13 @@ class HistoryWindow(QWidget):
         self.ui.Brocker_account.clear()
 
         #Сформируем актуальный список счетов из локальной БД
-        search_template={"brocker_name":f"{self.ui.Brocker.currentText()}"}
+        search_template = {"brocker_name":f"{self.ui.Brocker.currentText()}"}
         sql_query=ScriptNormalizer("accounts").select(LIKE=search_template)
         #log.debug(f'{__name__} -> set_brocker_accounts_list -> {sql_query}')
         #Создание подключения к БД
-        db_connection=DBIntegration()
+        db_connection = DBIntegration()
         #Отправка запроса
-        data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
+        data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
         #log.debug(f'{__name__}.data: {data}')
 
         account_names_list = list()
@@ -141,19 +175,20 @@ class HistoryWindow(QWidget):
         order=["ticker_name","ASC"]
         #Шаблон значений в ячейках для выборки поиск по всем таблицам
         #Ограничение вариантов выборки
-        limit=100
+        limit = 100
         #Создаем запрос к БД
-        sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list, ORDER=order)
+        sql_query = ScriptNormalizer("instruments").select(cols_list=cols_list,
+                                                         ORDER=order)
         #log.debug(f'{__name__}. {sql_query}')
         #Создание подключения к БД
-        db_connection=DBIntegration()
+        db_connection = DBIntegration()
         #Отправка запроса
-        data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
+        data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
         #log.debug(f'{__name__}.data: {data}')
-        ticker_list=[]
-        instrument_name_list=[]
+        ticker_list = []
+        instrument_name_list = []
         for item in data:
-            value1, value2=item
+            value1, value2 = item
             ticker_list.append(value1)
             instrument_name_list.append(value2)
         return ticker_list, instrument_name_list
@@ -165,12 +200,12 @@ class HistoryWindow(QWidget):
         cols_list = ["ticker","instrument_type"]
         search_template = {"ticker_name":self.ui.instrument_name.text()}
         #Создаем запрос к БД
-        sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list, LIKE=search_template)
+        sql_query = ScriptNormalizer("instruments").select(cols_list=cols_list, LIKE=search_template)
         #log.info(f'{__name__} -> {sql_query}')
         #Создание подключения к БД
         db_connection = DBIntegration()
         #Отправка запроса
-        data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
+        data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
         #log.debug(f'{__name__} -> data: {data}')
         ticker_tupl = data[0]
         ticker = ticker_tupl[0]
@@ -235,10 +270,10 @@ class HistoryWindow(QWidget):
         {"account_id":"brocker_name"}
         '''
         #Создаем запрос к БД
-        sql_query=ScriptNormalizer("accounts").select()
+        sql_query = ScriptNormalizer("accounts").select()
         # log.info(f'{__name__}. {sql_query}')
         #Создание подключения к БД
-        db_connection=DBIntegration()
+        db_connection = DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
 
@@ -256,12 +291,12 @@ class HistoryWindow(QWidget):
         ''' Метод возвращает список id аккаунтов для объекта QComboBox
         '''
         # Данные о счетах храняться в БД
-        sql_query=ScriptNormalizer("accounts").select()
+        sql_query = ScriptNormalizer("accounts").select()
         #log.debug(f'{__name__}. {sql_query}')
         #Создание подключения к БД
-        db_connection=DBIntegration()
+        db_connection = DBIntegration()
         #Отправка запроса
-        data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
+        data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
 
         account_id_list = list()
         for i in range(len(data)):
@@ -295,18 +330,18 @@ class HistoryWindow(QWidget):
         20 - "instrument_uid"
         21 - "operation_enum"
         '''
-        accounts_info, brocker_info=self.get_account_dict()
+        accounts_info, brocker_info = self.get_account_dict()
         #log.debug(f'{__name__} -> accounts_info {accounts_info}')
-        body={"account_id_list":account_id_list,
-              "start":f'{start_date}T00:00:00+0400',
-              "end":f'{end_date}T23:59:59+0400',
-              "state":1,
-              "figi":""}
+        body = {"account_id_list":account_id_list,
+               "start":f'{start_date}T00:00:00+0400',
+               "end":f'{end_date}T23:59:59+0400',
+               "state":1,
+               "figi":""}
 
         request = Operations(TOKEN=self.token,BODY=body)
-        response_data_list=request.get_my_operations_by_account()
+        response_data_list = request.get_my_operations_by_account()
         #log.debug(f'{__name__} get_brocker_log -> type(response_data): {type(response_data_list)}')
-        operation_data_list=[]
+        operation_data_list = []
         for i in range(len(account_id_list)):
             for operation in response_data_list[i].operations:
                     # log.debug(f'{__name__} get_brocker_log -> operation: {operation}')
@@ -389,7 +424,7 @@ class HistoryWindow(QWidget):
                 item_price = QTableWidgetItem(str(round(price,4)))
                 item_quantity = QTableWidgetItem(str(operation_data_list[i]["quantity"]))
                 item_quantity_rest = QTableWidgetItem(str(operation_data_list[i]["quantity_rest"]))
-                item_figi= QTableWidgetItem(operation_data_list[i]["figi"])
+                item_figi = QTableWidgetItem(operation_data_list[i]["figi"])
                 item_instrument_type = QTableWidgetItem(operation_data_list[i]["instrument_type"])
                 item_date = QTableWidgetItem(str(operation_data_list[i]["date"]))
                 item_type = QTableWidgetItem(str(operation_data_list[i]["type"]))
@@ -444,10 +479,10 @@ class HistoryWindow(QWidget):
     def get_table_type(self):
         '''Возвращает тип журнала (локальный или брокера) в сформированной таблице
         '''
-        row=self.ui.results_table.currentRow()
-        column_count=self.ui.results_table.columnCount()
+        row = self.ui.results_table.currentRow()
+        column_count = self.ui.results_table.columnCount()
 
-        data=[]
+        data = []
         for col in range(column_count):
             data.append(self.ui.results_table.item(row,col).text())
         # log.debug(f'{__name__} -> data {data}')
@@ -463,13 +498,12 @@ class HistoryWindow(QWidget):
         '''Выделение строки цветом
         '''
         #log.debug(f'{__name__} -> mark_row() running!!!')
-        row_id=self.ui.results_table.currentRow()
-        column_count=self.ui.results_table.columnCount()
+        row_id = self.ui.results_table.currentRow()
+        column_count = self.ui.results_table.columnCount()
         #Перекрасим выбранную строку
         for col_id in range(column_count):
-            item=self.ui.results_table.item(row_id,col_id)
+            item = self.ui.results_table.item(row_id,col_id)
             item.setBackground(QColor(188,143,143))
-
 
     """Описание слотов. Начало.
     """
@@ -478,7 +512,8 @@ class HistoryWindow(QWidget):
         '''Функция возвращает действие для сигнала изменения размера окна
         '''
         # Возвращает ширину и высоту элемента
-        get_w_h = lambda object: (object.geometry().getRect()[2], object.geometry().getRect()[3])
+        get_w_h = lambda object: (object.geometry().getRect()[2], 
+                                  object.geometry().getRect()[3])
         history_w_width, history_w_height = get_w_h(self)
         # Необходио передать начальные размеры главному виджету так как в инициализации окна имеется сигнал
         # resize который не может быть вызван без изменения размера окна
@@ -496,8 +531,8 @@ class HistoryWindow(QWidget):
     def edit_transaction_from_local_db(self):
         '''Метод получения данных из таблицы results_table
         и подстановка данных в форму для редактирования данных в локаной БД'''
-        row=self.ui.results_table.currentRow()
-        column_count=self.ui.results_table.columnCount()
+        row = self.ui.results_table.currentRow()
+        column_count = self.ui.results_table.columnCount()
 
         data = list()
         for col in range(column_count):
@@ -525,8 +560,8 @@ class HistoryWindow(QWidget):
             new_window.ui.fee_edit.setText(data[12])
             new_window.ui.nkd_edit.setText(data[10])
             new_window.ui.description.setText(data[13])
-            qdate=QDate.fromString(data[2][:10],"yyyy-MM-dd")
-            str_time=data[2][11:]
+            qdate = QDate.fromString(data[2][:10],"yyyy-MM-dd")
+            str_time = data[2][11:]
             qtime = QTime.fromString(str_time,"HH:mm:ss")
             new_window.ui.dateTimeEdit.setDate(qdate)
             new_window.ui.dateTimeEdit.setTime(qtime)
@@ -538,8 +573,8 @@ class HistoryWindow(QWidget):
         '''Метод получения данных из таблицы results_table
         и подстановка данных в форму для сохранения новой транзакции
         '''
-        row_id=self.ui.results_table.currentRow()
-        column_count=self.ui.results_table.columnCount()
+        row_id = self.ui.results_table.currentRow()
+        column_count = self.ui.results_table.columnCount()
 
         #Получим данные из выбранной строки
         data = list()
@@ -573,40 +608,40 @@ class HistoryWindow(QWidget):
         add_new_transaction_window.ui.Currency.setText(currency)
         add_new_transaction_window.ui.price_edit.setText(data[7])
         add_new_transaction_window.ui.volume_edit.setText(data[10])
-        str_date=data[14][:10]
-        qdate=QDate.fromString(str_date,"yyyy-MM-dd")
-        str_time=data[14][11:19]
+        str_date = data[14][:10]
+        qdate = QDate.fromString(str_date,"yyyy-MM-dd")
+        str_time = data[14][11:19]
         qtime = QTime.fromString(str_time,"HH:mm:ss")
         add_new_transaction_window.ui.dateTimeEdit.setDate(qdate)
         add_new_transaction_window.ui.dateTimeEdit.setTime(qtime)
         #Поиск значения НКД для операций с облигациями
         # log.debug(f'{__name__} -> Тип инструмента(data[13]): {data[13]}')
         if data[13].lower()=='bond':
-            price=float(data[7])
-            quantity=float(data[10])
-            payment=float(data[8])
+            price = float(data[7])
+            quantity = float(data[10])
+            payment = float(data[8])
             # log.debug(f'{__name__} -> price, quantity, payment  {price, quantity, payment}')
-            nkd_value=(-1)*(payment/quantity)-price
+            nkd_value = (-1)*(payment/quantity)-price
             # log.debug(f'{__name__} -> nkd_value {nkd_value}')
             add_new_transaction_window.ui.nkd_edit.setText(str(round(nkd_value,2)))
 
         #Поиск значения суммы комисии за оперцию
-        operation_id=data[4]
-        row_count=self.ui.results_table.rowCount()
+        operation_id = data[4]
+        row_count = self.ui.results_table.rowCount()
         #Поиск номера строки в котором находится значение комиссии
         for row in range(row_count):
-            parent_id=self.ui.results_table.item(row, 5)
-            parent_id=parent_id.text()
+            parent_id = self.ui.results_table.item(row, 5)
+            parent_id = parent_id.text()
             if operation_id==parent_id:
-                fee_row=row
+                fee_row = row
                 break
         #log.debug(f'{__name__} -> edit_transaction_with_safe_new_one -> parent_id: {parent_id}')
         #Обработка значения комиссии из таблицы
         #Попытка передать значения комиссии в форму
         try:
-            fee=self.ui.results_table.item(fee_row, 8)
-            fee=fee.text()
-            fee=round(float(fee),2)
+            fee = self.ui.results_table.item(fee_row, 8)
+            fee = fee.text()
+            fee = round(float(fee),2)
             add_new_transaction_window.ui.fee_edit.setText(str((-1)*fee))
         except:
             # log.debug(f'{__name__} edit_transaction_with_safe_new_one -> Значение fee извлечь не удалось')
@@ -620,11 +655,11 @@ class HistoryWindow(QWidget):
         #Очистим таблицу если она была построена ранее
         self.ui.results_table.clear()
         #Получить даты для запроса
-        start_date=self.ui.start_date.date()
-        start_date=str(start_date.toPython())
-        end_date=self.ui.end_date.date()
-        end_date=str(end_date.toPython())
-        account_list=self.get_account_id_list()
+        start_date = self.ui.start_date.date()
+        start_date = str(start_date.toPython())
+        end_date = self.ui.end_date.date()
+        end_date = str(end_date.toPython())
+        account_list = self.get_account_id_list()
         self.get_brocker_log(account_list, start_date, end_date)
 
 
@@ -634,33 +669,35 @@ class HistoryWindow(QWidget):
         #Очистим таблицу если она была построена ранее
         self.ui.results_table.clear()
         #Получить даты для запроса
-        start_date=self.ui.start_date.date()
-        start_date=str(start_date.toPython())
-        end_date=self.ui.end_date.date()
-        end_date=str(end_date.toPython())
-        ticker=self.ui.ticker_edit.text()
-        brocker_account=self.ui.Brocker_account.currentText()
+        start_date = self.ui.start_date.date()
+        start_date = str(start_date.toPython())
+        end_date = self.ui.end_date.date()
+        end_date = str(end_date.toPython())
+        ticker = self.ui.ticker_edit.text()
+        brocker_account = self.ui.Brocker_account.currentText()
 
         # !!!join_tables строгое соответсвие порядка списка столбцов
         # в переменной "target" и парметров таблиц и столбцов
         # в переменной "source"
-        cols_list=['transactions.transaction_id',
-                   "date_time","brocker","brocker_account",
-                   "accounts.account_name","transactions.ticker","instruments.ticker_name",
-                   "transaction_type","transactions.currency","price","volume","fee","memo","nkd"]
+        cols_list = ['transactions.transaction_id',
+                     "date_time","brocker","brocker_account",
+                     "accounts.account_name","transactions.ticker",
+                     "instruments.ticker_name", "transaction_type",
+                     "transactions.currency","price","volume","fee",
+                     "memo", "nkd"]
 
-        join_tables={"target":["brocker_account","ticker_guid"],
-                     "source":{"accounts":["account_id"],
-                               "instruments":["id"]}
-                               }
+        join_tables = {"target":["brocker_account","ticker_guid"],
+                       "source":{"accounts":["account_id"],
+                       "instruments":["id"]}
+                       }
 
         #log.debug(f'{__name__} -> create_invest_log_table_v2 -> из поля self.ui.ticker_edit получен текст: {ticker}')
 
         #Создадим фильтр
-        filter={'transactions.ticker':ticker,
-                'accounts.account_name':brocker_account,
-                'date_time<':f'{end_date} 23:59:59',
-                'date_time>':f'{start_date} 00:00:00'}
+        filter = {'transactions.ticker':ticker,
+                  'accounts.account_name':brocker_account,
+                  'date_time<':f'{end_date} 23:59:59',
+                  'date_time>':f'{start_date} 00:00:00'}
 
 
         #Удалим из запроса пустые фильтры
@@ -687,14 +724,14 @@ class HistoryWindow(QWidget):
         # log.debug(f'{__name__} -> create_invest_log_table_v2 -> filter = {str(filter)}')
 
         #Создаем запрос к БД
-        sql_query=ScriptNormalizer("transactions").select(cols_list=cols_list,
+        sql_query = ScriptNormalizer("transactions").select(cols_list=cols_list,
                                                               JOIN=join_tables,
                                                               WHERE=filter)
 
 
         # log.debug(f'{__name__} -> {sql_query}')
         #Создание подключения к БД
-        db_connection=DBIntegration()
+        db_connection = DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
 
@@ -734,7 +771,7 @@ class HistoryWindow(QWidget):
                     transaction_type,currensy,price,qty,fee,memo,nkd) in enumerate(data):
 
                 if nkd==None:
-                    nkd=''
+                    nkd = ''
 
                 item_table = QTableWidgetItem("local_log")
                 item_acc_name = QTableWidgetItem(acc_name)

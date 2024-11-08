@@ -1,9 +1,4 @@
-import config
-import sys
-import re
-import datetime
-import os
-import time
+import sys, datetime, os, time, platform, shelve
 
 from auth.token import Token
 from services.quotes_service.quotes_servise import MarketDataService
@@ -13,12 +8,16 @@ from services.accounts_service.accounts_service import Accounts
 from db_integration import DBIntegration
 from sql_lib.script_normalizer import ScriptNormalizer
 from pprint import pprint
-import shelve
 from pathlib import Path
 
 import config
 logger_config = config.get_logger_config()
-logger_path = logger_config['path']
+
+if 'wind' in str(platform.system()).lower():
+    data_updater_log_path = logger_config['path']
+else:
+    data_updater_log_path = logger_config['alternative_path']
+
 data_updater_log_file = logger_config['data_updater']['name']
 file_mode = logger_config['data_updater']['mode']
 logger_level = logger_config['data_updater']['level']
@@ -41,7 +40,10 @@ if logger_level == None:
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
-fh = logging.FileHandler(filename=os.path.join(logger_path, data_updater_log_file), mode=file_mode, encoding='utf-8')
+fh = logging.FileHandler(filename=os.path.join(data_updater_log_path,
+                                               data_updater_log_file),
+                                               mode=file_mode,
+                                               encoding='utf-8')
 fh.setFormatter(formatter)
 log_data_updater.handlers.clear()
 log_data_updater.addHandler(sh)
@@ -60,6 +62,7 @@ class DataUpdater(object):
     def set_token(self):
         token = Token()
         self.token = token.access_token
+        log_data_updater.debug(f'token {self.token[:10]}')
 
     def test(self):
         print('test')

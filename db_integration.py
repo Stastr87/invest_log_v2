@@ -1,11 +1,17 @@
-import time, sys, os, psycopg2, logging
+import time, sys, os, psycopg2, platform, logging
 
 import config
 logger_config = config.get_logger_config()
-logger_path = logger_config['path']
-main_log_file = logger_config['db_integration']['name']
+
+if 'wind' in str(platform.system()).lower():
+    db_integration_log_path = logger_config['path']
+else:
+    db_integration_log_path = logger_config['alternative_path']
+
+db_integration_log_file = logger_config['db_integration']['name']
 file_mode = logger_config['db_integration']['mode']
 logger_level = logger_config['db_integration']['level']
+
 # Настройка логирования
 log_db_integration = logging.getLogger(__name__)
 if logger_level.lower() == 'debug':
@@ -23,7 +29,10 @@ if logger_level == None:
 formatter = logging.Formatter(u"[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
-fh = logging.FileHandler(filename=os.path.join(logger_path, main_log_file), mode=file_mode, encoding='utf-8')
+fh = logging.FileHandler(filename=os.path.join(db_integration_log_path,
+                                               db_integration_log_file),
+                         mode=file_mode, 
+                         encoding='utf-8')
 fh.setFormatter(formatter)
 log_db_integration.handlers.clear()
 log_db_integration.addHandler(sh)

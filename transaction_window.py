@@ -8,11 +8,7 @@ from ui.ui_transaction_form import Ui_Dialog
 from db_integration import DBIntegration
 from sql_lib.script_normalizer import ScriptNormalizer
 
-# import config
-# from  my_logger import MyLogger
-# logger_config = config.get_logger_config()
-# log_file = logger_config['transaction_window']
-# log = MyLogger(log_file).new_logger
+
 
 
 class TransactionWindow(QDialog):

@@ -1,16 +1,20 @@
 from enum import Enum
-import os
+import os, platform, sys, time
 # from pyclbr import Class
 from tinkoff.invest import Client, schemas
 from google.protobuf.timestamp_pb2 import Timestamp
 from pprint import pprint
 from datetime import datetime
-import time
-import sys
+
 
 import config
 logger_config = config.get_logger_config()
-logger_path = logger_config['path']
+
+if 'wind' in platform.system():
+    operations_service_log_path = logger_config['path']
+else:
+    operations_service_log_path = logger_config['alternative_path']
+
 operations_service_log_file = logger_config['operations_service']['name']
 file_mode = logger_config['operations_service']['mode']
 logger_level = logger_config['operations_service']['level']
@@ -33,7 +37,10 @@ if logger_level == None:
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
-fh = logging.FileHandler(filename=os.path.join(logger_path, operations_service_log_file), mode=file_mode, encoding='utf-8')
+fh = logging.FileHandler(filename=os.path.join(operations_service_log_path,
+                                               operations_service_log_file), 
+                                               mode=file_mode, 
+                                               encoding='utf-8')
 fh.setFormatter(formatter)
 log_operations_service.handlers.clear()
 log_operations_service.addHandler(sh)

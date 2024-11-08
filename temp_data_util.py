@@ -1,12 +1,17 @@
 #Модуль содержит вспомогательные функции для работы с временными данными
 
-import shelve, os, sys
+import shelve, os, sys, platform
 from enum import Enum
 from services.data_converter import DataConverter
 
 import config
 logger_config = config.get_logger_config()
-logger_path = logger_config['path']
+
+if 'wind' in str(platform.system()).lower():
+    temp_data_util_log_path = logger_config['path']
+else:
+    temp_data_util_log_path = logger_config['alternative_path']
+
 temp_data_util_log_file = logger_config['temp_data_util']['name']
 file_mode = logger_config['temp_data_util']['mode']
 logger_level = logger_config['temp_data_util']['level']
@@ -29,7 +34,10 @@ if logger_level == None:
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
-fh = logging.FileHandler(filename=os.path.join(logger_path, temp_data_util_log_file), mode=file_mode, encoding='utf-8')
+fh = logging.FileHandler(filename=os.path.join(temp_data_util_log_path,
+                                               temp_data_util_log_file),
+                                               mode=file_mode, 
+                                               encoding='utf-8')
 fh.setFormatter(formatter)
 log_temp_data_util.handlers.clear()
 log_temp_data_util.addHandler(sh)
