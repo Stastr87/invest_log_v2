@@ -16,8 +16,11 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from chart_lib.chart import MyChart
 import pandas as pd
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'instrument_card_window.log')
+# import config
+# from  my_logger import MyLogger
+# logger_config = config.get_logger_config()
+# log_file = logger_config['instrument_card_window']
+# log = MyLogger(log_file).new_logger
 
 class MyMplCanavas(FigureCanvasQTAgg):
     '''Останется тут как возможный пример рисования графиков в Qt'''

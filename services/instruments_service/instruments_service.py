@@ -1,15 +1,33 @@
+from locale import currency
 from tinkoff.invest import Client
 from tinkoff.invest.exceptions import RequestError
 from datetime import datetime
 from auth.token import Token
+import sys
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'instruments_servise.log')
+# import config
+# logger_config = config.get_logger_config()
+# logger_path = logger_config['path']
+# log_file = logger_config['instruments_servise']
+# logger_level = logger_config['level']
+
+# import logging
+# logger = logging.getLogger(__name__)
+# formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+# sh = logging.StreamHandler(sys.stdout)
+# sh.setFormatter(formatter)
+# fh = logging.FileHandler(filename=(log_file+log_file), mode=logger_config['mode'])
+# fh.setFormatter(formatter)
+# logger.handlers.clear()
+# logger.addHandler(sh)
+# logger.addHandler(fh)
+
 
 class InstrumentsService:
     '''Сервис предназначен для получения информации об инструментах
     '''
     def __init__(self, **kwargs):
+        # logger.info(f'{self.__class__.__name__} initialized!!!')
 
         self.token=self.set_token()
         self.request_body=None
@@ -27,11 +45,11 @@ class InstrumentsService:
         '''
         with Client(self.token) as client:
             try:
-                log.info(f'{__name__} -> try to get_bond_by_figi() -> figi: {figi}')
+                # log_instruments_service.info(f'{__name__} -> try to get_bond_by_figi() -> figi: {figi}')
                 response_data=client.instruments.bond_by(id_type=1, id=figi)
             except RequestError as e:
                 response_data=None
-                log.error(f'{__name__} -> get_bond_by_figi() -> {e}')
+                # log_instruments_service.error(f'{__name__} -> get_bond_by_figi() -> {e}')
 
         return response_data
 
@@ -40,11 +58,11 @@ class InstrumentsService:
         '''
         with Client(self.token) as client:
             try:
-                log.info(f'{__name__} -> try to get_bond_coupons() -> figi: {figi}')
+                # log_instruments_service.info(f'{__name__} -> try to get_bond_coupons() -> figi: {figi}')
                 response_data=client.instruments.get_bond_coupons(figi=figi)
             except RequestError as e:
                 response_data=None
-                log.error(f'{__name__} -> get_bond_coupons() -> {e}')
+                # log_instruments_service.error(f'{__name__} -> get_bond_coupons() -> {e}')
         return response_data
 
     def get_nearest_coupon(self,figi):
@@ -66,14 +84,13 @@ class InstrumentsService:
 
         return nearest_coupon_date, nearest_coupon_money_value
 
-
     def get_currencies(self):
         '''Метод возвращает список валют на рынке,
         имеющих статус 1 (Базовый список инструментов (по умолчанию).
         Инструменты доступные для торговли через TINKOFF INVEST API.)
         '''
         with Client(self.token) as client:
-            response_data=client.instruments.currencies(instrument_status=1)
+            response_data = client.instruments.currencies(instrument_status=1)
         return response_data
 
     def get_currency_by(self,id):
@@ -98,7 +115,7 @@ class InstrumentsService:
         '''
         with Client(self.token) as client:
             SharesResponse = client.instruments.shares()
-        instruments_list=SharesResponse.instruments
+        instruments_list = SharesResponse.instruments
         return instruments_list
 
     def get_bonds_list(self):
@@ -114,5 +131,13 @@ class InstrumentsService:
         '''
         with Client(self.token) as client:
             EtfsResponse = client.instruments.etfs()
-        instruments_list=EtfsResponse.instruments
+        instruments_list = EtfsResponse.instruments
+        return instruments_list
+
+    def get_currencies_list(self):
+        '''Получить список всех валют доступных к торговле
+        '''
+        with Client(self.token) as client:
+            currency_response = client.instruments.currencies()
+        instruments_list = currency_response.instruments
         return instruments_list

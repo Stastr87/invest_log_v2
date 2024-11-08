@@ -1,4 +1,5 @@
 import os
+import sys
 from PySide6.QtGui import QColor
 from PySide6.QtCore import QDate, QTime, Qt, Signal
 from PySide6.QtWidgets import (QWidget,QTableWidget, QTableWidgetItem, QButtonGroup,
@@ -11,9 +12,12 @@ from sql_lib.script_normalizer import ScriptNormalizer
 from lib.tink_integration.operations_servise import Operations, OperationTypes
 from auth.token import Token
 
-
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = os.path.join('history_window.log'))
+import config
+logger_config = config.get_logger_config()
+logger_path = logger_config['path']
+main_log_file = logger_config['history_window']['name']
+file_mode = logger_config['history_window']['mode']
+logger_level = logger_config['history_window']['level']
 
 from services.data_converter import DataConverter
 # Создадим экземпляр класса DataConverter() для последующей конвертации данных в коде
@@ -30,7 +34,7 @@ class HistoryWindow(QWidget):
         self.connectUi()
         self.resized.connect(self.resize_function)
         self.set_token()
-        log.info(f'HistoryWindow is initialized...')
+        # log.info(f'{self.__class__.__name__} initialized!!!')
 
     def set_token(self):
         token = Token()
@@ -232,7 +236,7 @@ class HistoryWindow(QWidget):
         '''
         #Создаем запрос к БД
         sql_query=ScriptNormalizer("accounts").select()
-        log.info(f'{__name__}. {sql_query}')
+        # log.info(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
@@ -305,7 +309,7 @@ class HistoryWindow(QWidget):
         operation_data_list=[]
         for i in range(len(account_id_list)):
             for operation in response_data_list[i].operations:
-                    log.debug(f'{__name__} get_brocker_log -> operation: {operation}')
+                    # log.debug(f'{__name__} get_brocker_log -> operation: {operation}')
                     operation_data={"account_id":account_id_list[i],
                                     "account_name":accounts_info[account_id_list[i]],
                                     #В перспективе если потребуется указать другого брокера доработать таблицу
@@ -446,11 +450,13 @@ class HistoryWindow(QWidget):
         data=[]
         for col in range(column_count):
             data.append(self.ui.results_table.item(row,col).text())
-        log.debug(f'{__name__} -> data {data}')
+        # log.debug(f'{__name__} -> data {data}')
         if data[0] == "local_log":
-            log.debug(f'{__name__} -> Is_local_log {data[0]=="local_log"}')
+            # log.debug(f'{__name__} -> Is_local_log {data[0]=="local_log"}')
+            pass
         if data[0] == "brocker_log":
-            log.debug(f'{__name__} -> Is_local_log {data[0]=="local_log"}')
+            # log.debug(f'{__name__} -> Is_local_log {data[0]=="local_log"}')
+            pass
         return data[0]
 
     def mark_row(self):
@@ -496,7 +502,7 @@ class HistoryWindow(QWidget):
         data = list()
         for col in range(column_count):
             data.append(self.ui.results_table.item(row,col).text())
-        log.debug(f'{__name__} -> data {data}')
+        # log.debug(f'{__name__} -> data {data}')
 
         sender = self.sender()
         new_window=TransactionWindow()
@@ -504,7 +510,7 @@ class HistoryWindow(QWidget):
         new_window.set_title(f'{sender.text()} запись id {data[1]}')
         new_window.setModal(False)
         if data[0] == "local_log":
-            log.debug(f'{__name__} -> Is_local_log {data[0] == "local_log"}')
+            # log.debug(f'{__name__} -> Is_local_log {data[0] == "local_log"}')
             new_window.ui.Transactio_type.setEditable(True)
             new_window.ui.Transactio_type.setEditText(data[3])
             new_window.ui.Brocker.setEditable(True)
@@ -541,12 +547,12 @@ class HistoryWindow(QWidget):
             try:
                 data.append(self.ui.results_table.item(row_id,col_id).text())
             except:
-                log.error(f'Ошибка получения данных из таблицы', exc_info = True)
+                # log.error(f'Ошибка получения данных из таблицы', exc_info = True)
                 data.append(None)
         #Изменим фон выбранной строки
         self.mark_row()
 
-        log.debug(f'{__name__} -> edit_transaction_with_safe_new_one -> data {data}')
+        # log.debug(f'{__name__} -> edit_transaction_with_safe_new_one -> data {data}')
 
         sender = self.sender()
         add_new_transaction_window = TransactionWindowEdit()
@@ -574,14 +580,14 @@ class HistoryWindow(QWidget):
         add_new_transaction_window.ui.dateTimeEdit.setDate(qdate)
         add_new_transaction_window.ui.dateTimeEdit.setTime(qtime)
         #Поиск значения НКД для операций с облигациями
-        log.debug(f'{__name__} -> Тип инструмента(data[13]): {data[13]}')
+        # log.debug(f'{__name__} -> Тип инструмента(data[13]): {data[13]}')
         if data[13].lower()=='bond':
             price=float(data[7])
             quantity=float(data[10])
             payment=float(data[8])
-            log.debug(f'{__name__} -> price, quantity, payment  {price, quantity, payment}')
+            # log.debug(f'{__name__} -> price, quantity, payment  {price, quantity, payment}')
             nkd_value=(-1)*(payment/quantity)-price
-            log.debug(f'{__name__} -> nkd_value {nkd_value}')
+            # log.debug(f'{__name__} -> nkd_value {nkd_value}')
             add_new_transaction_window.ui.nkd_edit.setText(str(round(nkd_value,2)))
 
         #Поиск значения суммы комисии за оперцию
@@ -603,7 +609,7 @@ class HistoryWindow(QWidget):
             fee=round(float(fee),2)
             add_new_transaction_window.ui.fee_edit.setText(str((-1)*fee))
         except:
-            log.debug(f'{__name__} edit_transaction_with_safe_new_one -> Значение fee извлечь не удалось')
+            # log.debug(f'{__name__} edit_transaction_with_safe_new_one -> Значение fee извлечь не удалось')
             add_new_transaction_window.ui.fee_edit.setText(str(0))
 
         #Показать форму транзакции
@@ -678,7 +684,7 @@ class HistoryWindow(QWidget):
             filter.pop('date_time<')
             filter.pop('date_time>')
 
-        log.debug(f'{__name__} -> create_invest_log_table_v2 -> filter = {str(filter)}')
+        # log.debug(f'{__name__} -> create_invest_log_table_v2 -> filter = {str(filter)}')
 
         #Создаем запрос к БД
         sql_query=ScriptNormalizer("transactions").select(cols_list=cols_list,
@@ -686,7 +692,7 @@ class HistoryWindow(QWidget):
                                                               WHERE=filter)
 
 
-        log.debug(f'{__name__} -> {sql_query}')
+        # log.debug(f'{__name__} -> {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
@@ -783,13 +789,13 @@ class HistoryWindow(QWidget):
         '''Описывает стандартную кнопку
         '''
         sender = self.sender()
-        log.debug(f'btn "{sender.text()}" Clicked!')
+        # log.debug(f'btn "{sender.text()}" Clicked!')
 
     def the_button_was_toggled(self, checked):
         '''Кнопка переключатель.
         Аргумент "checked" отражает состояние кнопки: True или False
         '''
         sender = self.sender()
-        log.debug(f'btn "{sender.text()}" Checked?, {checked}')
+        # log.debug(f'btn "{sender.text()}" Checked?, {checked}')
 
     '''Описание слотов. Конец.'''

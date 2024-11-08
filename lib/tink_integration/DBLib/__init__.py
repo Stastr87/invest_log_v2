@@ -1,7 +1,6 @@
 from __future__ import print_function
 import datetime
 from datetime import datetime
-from openapi_client import openapi
 from typing import List
 from pprint import pprint
 import time
@@ -44,3 +43,12 @@ class DBLib:
         print("Операция завершена")
         close_connection(new_connection)
 
+    '''В объектно-ориентированном программировании деструктор 
+    вызывается при удалении или уничтожении объекта.
+    Деструктор используется для выполнения действий по очистке 
+    перед разрушением объекта, таких как закрытие соединений с базой данных.
+    Для выполнения задачи очистки перед удалением объекта в Python используется
+    метод __del__().При удалении ссылки на объект деструктор не запускается.
+    Для этого нужно удалить все ссылки на этот объект.'''
+    def __del__(self):
+        print('Object destroyed')

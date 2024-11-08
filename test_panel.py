@@ -13,8 +13,11 @@ import datetime
 import os
 from pathlib import Path
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'test_panel.log')
+# import config
+# from  my_logger import MyLogger
+# logger_config = config.get_logger_config()
+# log_file = logger_config['test_panel']
+# log = MyLogger(log_file).new_logger
 
 class TestPanel_Window(QWidget):
     def __init__(self):
@@ -45,7 +48,7 @@ class TestPanel_Window(QWidget):
         '''Возвращает список счетов из локальной БД.
         '''
         sql_query=ScriptNormalizer("accounts").select()
-        log.debug(f'{__name__}. {sql_query}')
+        # log.debug(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
@@ -54,7 +57,7 @@ class TestPanel_Window(QWidget):
         account_id_list=[]
         for i in range(len(data)):
             account_id_list.append(str(data[i][0]))
-        log.debug(f'{__name__}. -> account_id_list: {account_id_list}')
+        # log.debug(f'{__name__}. -> account_id_list: {account_id_list}')
         return account_id_list
 
 
@@ -92,12 +95,12 @@ class TestPanel_Window(QWidget):
 
     def get_accounts(self):
         sql_query=ScriptNormalizer("accounts").select()
-        log.debug(f'{__name__}. {sql_query}')
+        # log.debug(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.debug(f'{__name__} -> get_accounts data: {data}')
+        # log.debug(f'{__name__} -> get_accounts data: {data}')
         return data
 
     def update_accounts(self):
@@ -110,7 +113,7 @@ class TestPanel_Window(QWidget):
 
         request=Accounts(TOKEN=self.get_token())
         response_data=request.get_my_accounts()
-        log.debug(f'{__name__} -> update_accounts: response_data {response_data}')
+        # log.debug(f'{__name__} -> update_accounts: response_data {response_data}')
 
         for item in response_data:
             if item["account_id"] not in accounts_id_list:
@@ -124,7 +127,7 @@ class TestPanel_Window(QWidget):
         cols_list=["figi"]
         #Создаем запрос к БД
         sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list)
-        log.info(f'{__name__}. {sql_query}')
+        # log.info(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса

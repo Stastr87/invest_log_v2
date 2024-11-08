@@ -7,8 +7,8 @@ from pprint import pprint
 from datetime import datetime
 import time
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'operations_service.log')
+# import my_logger
+# log = my_logger.setup_applevel_logger(file_name = 'operations_service.log')
 
 class OperationTypes(Enum):
     OPERATION_TYPE_UNSPECIFIED = 0 # (0, 'Тип операции не определён')

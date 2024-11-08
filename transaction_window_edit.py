@@ -8,8 +8,11 @@ from ui.ui_transaction_form_edit import Ui_Dialog
 from db_integration import DBIntegration
 from sql_lib.script_normalizer import ScriptNormalizer
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'transaction_window_edit.log')
+# import config
+# from  my_logger import MyLogger
+# logger_config = config.get_logger_config()
+# log_file = logger_config['transaction_window_edit']
+# log = MyLogger(log_file).new_logger
 
 class TransactionWindowEdit(QDialog):
     def __init__(self):
@@ -41,7 +44,7 @@ class TransactionWindowEdit(QDialog):
 
         search_template = {"brocker_name":f"{self.ui.Brocker.currentText()}"}
         sql_query = ScriptNormalizer("accounts").select(LIKE = search_template)
-        log.debug(f'{__name__}. {sql_query}')
+        # log.debug(f'{__name__}. {sql_query}')
 
         #Создание подключения к БД
         db_connection = DBIntegration()
@@ -62,12 +65,12 @@ class TransactionWindowEdit(QDialog):
         search_template = {"ticker":self.ui.ticker_edit.text()}
         #Создаем запрос к БД
         sql_query = ScriptNormalizer("instruments").select(LIKE = search_template)
-        log.debug(f'{__name__}. {sql_query}')
+        # log.debug(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection = DBIntegration()
         #Отправка запроса
         data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.debug(f'{__name__}.data: {data}')
+        # log.debug(f'{__name__}.data: {data}')
         self.ui.Currency.setText(data[0][8])
         self.ui.Currency.setReadOnly(True)
 
@@ -85,7 +88,7 @@ class TransactionWindowEdit(QDialog):
         limit = 100
         #Создаем запрос к БД
         sql_query = ScriptNormalizer("instruments").select(cols_list = cols_list, ORDER = order)
-        log.debug(f'{__name__}. {sql_query}')
+        # log.debug(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection = DBIntegration()
         #Отправка запроса
@@ -106,19 +109,19 @@ class TransactionWindowEdit(QDialog):
         search_template = {"ticker_name":self.ui.instrument_name.text()}
         #Создаем запрос к БД
         sql_query = ScriptNormalizer("instruments").select(cols_list = cols_list, LIKE = search_template)
-        log.info(f'{__name__}. {sql_query}')
+        # log.info(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection = DBIntegration()
         #Отправка запроса
         data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.debug(f'{__name__}.data: {data}')
+        # log.debug(f'{__name__}.data: {data}')
 
         ticker_tupl = data[0]
         ticker = ticker_tupl[0]
         instrument_type = ticker_tupl[1]
         if instrument_type != 'Bond':
             self.ui.nkd_edit.setEnabled(False)
-        log.info(f'{__name__}.ticker: {ticker}')
+        # log.info(f'{__name__}.ticker: {ticker}')
         self.ui.ticker_edit.setText(ticker)
         self.nkd  =  QLineEdit()
 
@@ -126,12 +129,12 @@ class TransactionWindowEdit(QDialog):
         where = {"figi":figi}
         #Создаем запрос к БД
         sql_query = ScriptNormalizer("instruments").select(WHERE = where)
-        log.info(f'{__name__}. {sql_query}')
+        # log.info(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection = DBIntegration()
         #Отправка запроса
         data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.info(f'{__name__}.data: {data}')
+        # log.info(f'{__name__}.data: {data}')
         try:
             instrument_name_tupl = data[0]
             instrument_name = instrument_name_tupl[1]
@@ -143,7 +146,7 @@ class TransactionWindowEdit(QDialog):
             instrument_ticker = None
             currency = None
 
-        log.info(f'{__name__}.instrument_name, instrument_ticker: {instrument_name, instrument_ticker}')
+        # log.info(f'{__name__}.instrument_name, instrument_ticker: {instrument_name, instrument_ticker}')
 
         return instrument_name, instrument_ticker, currency
 
@@ -160,23 +163,23 @@ class TransactionWindowEdit(QDialog):
             search_template = {"ticker":ticker}
             #Создаем запрос к БД
             sql_query = ScriptNormalizer("instruments").select(LIKE = search_template)
-            log.debug(f'{__name__}. {sql_query}')
+            # log.debug(f'{__name__}. {sql_query}')
             #Создание подключения к БД
             db_connection = DBIntegration()
             #Отправка запроса
             data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-            log.debug(f'{__name__}.data: {data}')
+            # log.debug(f'{__name__}.data: {data}')
             return data[0][0]
 
         def get_account_id(account_name):
             search_template = {"account_name":account_name}
             sql_query = ScriptNormalizer("accounts").select(LIKE = search_template)
-            log.debug(f'{__name__}. {sql_query}')
+            # log.debug(f'{__name__}. {sql_query}')
             #Создание подключения к БД
             db_connection = DBIntegration()
             #Отправка запроса
             data = DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-            log.debug(f'{__name__}.data: {data}')
+            # log.debug(f'{__name__}.data: {data}')
             return data[0][0]
 
         #Получить данные из полей формы
@@ -203,7 +206,7 @@ class TransactionWindowEdit(QDialog):
         #    file.write(json.dumps(data, ensure_ascii = False,indent = 4))
 
         sender  =  self.sender()
-        log.debug(f'btn "{sender.text()}" Clicked!')
+        # log.debug(f'btn "{sender.text()}" Clicked!')
 
         sql_query = ScriptNormalizer("transactions", new_data = data).insert()
         db_connection = DBIntegration()

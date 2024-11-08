@@ -10,8 +10,8 @@ from sql_lib.script_normalizer import ScriptNormalizer
 from auth.token import Token
 from pprint import pprint
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'update_account_db.log')
+# import my_logger
+# log = my_logger.setup_applevel_logger(file_name = 'update_account_db.log')
 
 def get_token():
     token = Token()
@@ -19,12 +19,12 @@ def get_token():
 
 def get_accounts():
     sql_query=ScriptNormalizer("accounts").select()
-    log.debug(f'{__name__}. {sql_query}')
+    # log.debug(f'{__name__}. {sql_query}')
     #Создание подключения к БД
     db_connection=DBIntegration()
     #Отправка запроса
     data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-    log.debug(f'{__name__}.data: {data}')
+    # log.debug(f'{__name__}.data: {data}')
     return data
 
 

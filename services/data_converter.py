@@ -1,5 +1,8 @@
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'data_converter.log')
+# import config
+# from  my_logger import MyLogger
+# logger_config = config.get_logger_config()
+# log_file = logger_config['data_converter']
+# log = MyLogger(log_file).new_logger
 
 
 class DataConverter(object):

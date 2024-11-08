@@ -6,8 +6,11 @@ from tinkoff.invest import schemas
 from auth.token import Token
 from pprint import pprint
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'quotes_servise.log')
+# import config
+# from  my_logger import MyLogger
+# logger_config = config.get_logger_config()
+# log_file = logger_config['quotes_servise']
+# log = MyLogger(log_file).new_logger
 
 class MarketDataService:
     '''MarketDataService
@@ -142,7 +145,7 @@ class MarketDataService:
         Тело ответа — GetCandlesResponse https://tinkoff.github.io/investAPI/marketdata/#getcandlesresponse
         Возвращает массив объектов HistoricCandle https://tinkoff.github.io/investAPI/marketdata/#historiccandle
         '''
-        log.debug(f'{__name__} -> get_candle_array () -> self.request_body: {self.request_body}')
+        # log.debug(f'{__name__} -> get_candle_array () -> self.request_body: {self.request_body}')
         with Client(self.token) as client:
             candle_array=client.market_data.get_candles(figi=self.request_body.figi,
                                                         from_=self.request_body.from_,

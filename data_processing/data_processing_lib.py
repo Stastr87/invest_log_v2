@@ -14,8 +14,11 @@ from tinkoff.invest import Client, schemas
 from services.quotes_service.quotes_servise import MarketDataService
 from auth.token import Token
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'data_processing_lib.log')
+# import config
+# from  my_logger import MyLogger
+# logger_config = config.get_logger_config()
+# log_file = logger_config['data_processing_lib']
+# log = MyLogger(log_file).new_logger
 
 
 class DataProcessing(object):
@@ -69,7 +72,7 @@ class DataProcessing(object):
         before_raw_candle_array = pd.DataFrame()
         after_raw_candle_array = pd.DataFrame()
         if self.existing_start.timestamp() > self._start_date.timestamp():
-            log.debug(f'{__name__} -> update_data_in_local_storage() -> Обновление ранних данных')
+            # log.debug(f'{__name__} -> update_data_in_local_storage() -> Обновление ранних данных')
             # В случае если запрос включает период больше года сервер данных возвращает ошибку
             # Необходио разбить интервал запроса на несколько отрезков и дописать
             # данные в локальное хранилище
@@ -81,7 +84,7 @@ class DataProcessing(object):
                 before_raw_candle_array = self.tink_candles_to_data_frame(self.tink_raw_candle_array)
 
         if self.existing_end.timestamp() < self._end_date.timestamp():
-            log.debug(f'{__name__} -> update_data_in_local_storage() -> Обновление поздних данных')
+            # log.debug(f'{__name__} -> update_data_in_local_storage() -> Обновление поздних данных')
             days_diff2 = self._end_date.day - self.existing_end.day
             if days_diff2 > 364:
                 pass
@@ -92,7 +95,7 @@ class DataProcessing(object):
 
         frames = [before_raw_candle_array,self.existing_array,after_raw_candle_array]
         result_frame = pd.concat(frames)
-        log.debug(f'{__name__} -> update_data_in_local_storage() -> Сохранение данных в файл')
+        # log.debug(f'{__name__} -> update_data_in_local_storage() -> Сохранение данных в файл')
         self.save_data_to_local_storage(self.timeFrame, result_frame)
 
 
@@ -106,10 +109,10 @@ class DataProcessing(object):
         try:
             with open (raw_data_path,'rb') as file:
                 existing_array = pickle.load(file)
-            log.debug(f'{__name__} -> get_existing_array() -> existing_array: Is exist')
+            # log.debug(f'{__name__} -> get_existing_array() -> existing_array: Is exist')
         except:
             existing_array = pd.DataFrame()
-            log.error(f'{__name__} -> get_existing_array() -> fail to open raw_data_path', exc_info=True)
+            # log.error(f'{__name__} -> get_existing_array() -> fail to open raw_data_path', exc_info=True)
 
         return existing_array
 
@@ -121,7 +124,7 @@ class DataProcessing(object):
         #Переделать под загрузку из файла согласно таймфрему
         raw_data_path = os.path.join('candles',self._figi,'5_candles.pkl')
         raw_data_path = os.path.abspath(raw_data_path)
-        log.debug(f'{__name__} -> get_local_stored_data() -> raw_data_path: {raw_data_path}')
+        # log.debug(f'{__name__} -> get_local_stored_data() -> raw_data_path: {raw_data_path}')
         with open(raw_data_path,'rb') as file:
             raw_data=pickle.load(file)
 
@@ -179,6 +182,6 @@ class DataProcessing(object):
             total_df = pd.concat(pd_frames)
         except:
             total_df=pd.DataFrame()
-            log.error(f'{__name__} -> tink_candles_to_data_frame() -> невозможно объединить данные', exc_info=True)
+            # log.error(f'{__name__} -> tink_candles_to_data_frame() -> невозможно объединить данные', exc_info=True)
 
         return total_df

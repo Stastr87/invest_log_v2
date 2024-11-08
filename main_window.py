@@ -1,5 +1,6 @@
 #Standart module import
-from turtle import position
+# from turtle import position
+from locale import currency
 import config
 import sys
 import re
@@ -31,39 +32,69 @@ from matplotlib.figure import Figure
 #Services import
 
 from services.quotes_service.quotes_servise import MarketDataService
-from services.instruments_servise.instruments_servise import InstrumentsService
+from services.instruments_service.instruments_service import InstrumentsService
 from db_integration import DBIntegration
 from sql_lib.script_normalizer import ScriptNormalizer
 from services.data_converter import DataConverter
 from data_processing.data_processing_lib import DataProcessing
 import temp_data_util
 
-#log
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'main_window.log')
+import config
+logger_config = config.get_logger_config()
+logger_path = logger_config['path']
+main_log_file = logger_config['main_window']['name']
+file_mode = logger_config['main_window']['mode']
+logger_level = logger_config['main_window']['level']
 
-# Создадим экземпляр класса DataConverter() для последующей конвертации данных вкоде
+import logging
+# Настройка логирования
+log_main = logging.getLogger(__name__)
+if logger_level.lower() == 'debug':
+    log_main.setLevel(logging.DEBUG)
+if logger_level.lower() == 'error':
+    log_main.setLevel(logging.ERROR)
+if logger_level.lower() == 'info':
+    log_main.setLevel(logging.INFO)
+if logger_level.lower() == 'warning':
+    log_main.setLevel(logging.WARNING)
+if logger_level.lower() == 'critical':
+    log_main.setLevel(logging.CRITICAL)
+if logger_level == None:
+    log_main.setLevel(logging.NOTSET)
+formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
+sh = logging.StreamHandler(sys.stdout)
+sh.setFormatter(formatter)
+fh = logging.FileHandler(filename=os.path.join(logger_path, main_log_file), mode=file_mode, encoding='utf-8')
+fh.setFormatter(formatter)
+log_main.handlers.clear()
+log_main.addHandler(sh)
+log_main.addHandler(fh)
+
 converter = DataConverter()
 
 class InvestLog_v2(QMainWindow):
 
     resized = Signal()
     def __init__(self, parent=None):
+
+
         # Для того что бы правильно проинициализировались элементы окна
         # создаются временные директории
         path = config.get_config()["temp_file"]
         self.temp_file = os.path.abspath(os.path.join(*path))
         if not os.path.exists(self.temp_file):
             os.makedirs(self.temp_file)
+
         #Важная строка для отслеживания изменения размера окна
         super(InvestLog_v2, self).__init__(parent=parent)
-        self.ui  =  Ui_MainWindow()
+        self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.connectUi()
+
         #Отслеживание сигналов изменения размера
         self.resized.connect(self.resize_function)
 
-        log.info(f'[{__name__}] InvestLog_v2 main_window is initialized...')
+        log_main.info(f'[{__name__}] InvestLog_v2 main_window is initialized...')
 
     def connectUi(self):
         #Изменить имя окна
@@ -152,7 +183,7 @@ class InvestLog_v2(QMainWindow):
             instrument_name = self.ui.positions_table.item(1,1).text()
         else:
             instrument_name = self.ui.positions_table.item(row,1).text()
-        #log.debug(f'{__name__} -> get_selected_instrument_name() -> instrument_name: {instrument_name}')
+        log_main.debug(f'{__name__} -> get_selected_instrument_name() -> instrument_name: {instrument_name}')
         return instrument_name
 
     def get_accounts(self):
@@ -183,7 +214,7 @@ class InvestLog_v2(QMainWindow):
         cols_list = ["figi","ticker_name","instrument_type","currency", "ticker"]
         #Создаем запрос к БД
         sql_query = ScriptNormalizer("instruments").select(cols_list = cols_list)
-        log.debug(f'[{__name__}] get_instruments() -> sql_query: {sql_query}')
+        log_main.debug(f'[{__name__}] get_instruments() -> sql_query: {sql_query}')
         #Создание подключения к БД
         db_connection = DBIntegration()
         #Отправка запроса
@@ -229,7 +260,7 @@ class InvestLog_v2(QMainWindow):
             maturity_date = bond_info.instrument.maturity_date
             nominal = bond_info.instrument.nominal
             nominal = converter.tink_money_value_to_float(nominal)
-            log.debug(f'[{__name__}] -> [open_instrument_card()] -> maturity_date: {maturity_date.strftime("%B %d, %Y")} \n type(maturity_date): {type(maturity_date)}')
+            log_main.debug(f'[{__name__}] -> [open_instrument_card()] -> maturity_date: {maturity_date.strftime("%B %d, %Y")} \n type(maturity_date): {type(maturity_date)}')
             price = float(self.ui.positions_table.item(row,4).text())
             qty = self.get_instrument_qty(row)
             total_price = round(price*qty)
@@ -360,19 +391,20 @@ class InvestLog_v2(QMainWindow):
 
     def get_instrument_description_from_local_db(self,figi):
         '''Получение данных об инструменте из локальной БД
-         Примечание: Возможно имеет смысл перенести в отдельный модуль...
+
+        Примечание: Возможно имеет смысл перенести в отдельный модуль...
         '''
         cols_list=['instrument_memo']
         filter={'instruments.figi':str(f"{figi}")}
         sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list,
                                                               WHERE=filter)
-        log.debug(f'[{__name__}] get_instrument_description_from_local_db() -> sql_query: \n{sql_query}')
+        log_main.debug(f'[{__name__}] get_instrument_description_from_local_db() -> sql_query: \n{sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
         instrument_description=data[0][0]
-        log.debug(f'[{__name__}] get_instrument_description_from_local_db() -> instrument_description: {instrument_description}')
+        log_main.debug(f'[{__name__}] get_instrument_description_from_local_db() -> instrument_description: {instrument_description}')
         return instrument_description
 
     def get_currency_price_list(self):
@@ -420,7 +452,7 @@ class InvestLog_v2(QMainWindow):
             last_prices_list = response_data.last_prices
         else:
             last_prices_list = response_data
-            log.error(f'[{__name__}] get_last_prices_list() -> error_massage:{error_massage}')
+            log_main.error(f'[{__name__}] get_last_prices_list() -> error_massage:{error_massage}')
         return last_prices_list
 
     def update_quotes(self):
@@ -431,10 +463,16 @@ class InvestLog_v2(QMainWindow):
         '''
         _, positions_storage = temp_data_util.get_stored_data(self.temp_file)
         positions_info = positions_storage['positions_info']
-        main_window_positions_list = temp_data_util.get_normalized_positions_list(positions_info)
+
+        positions_list = temp_data_util.get_normalized_positions_list(positions_info)
+        currencies_list = temp_data_util.get_currencies_positions_list(positions_info)
+
+        main_window_positions_list = positions_list + currencies_list
+
+        log_main.debug(f'[{__name__}] update_quotes() -> main_window_positions_list:{main_window_positions_list}')
 
         #Составим список инструментов на всех счетах удалив дубликаты
-        # Этот список будет использован для запроса котировок
+        #Этот список будет использован для запроса котировок
         figi_list = list(map(lambda main_window_position: main_window_position['figi'],
                              main_window_positions_list))
 
@@ -453,12 +491,13 @@ class InvestLog_v2(QMainWindow):
                 if self.ui.positions_table.item(i, 0).text() == quote["figi"]:
                     price = quote["price"]
                     if quote["price"] == 0:
-                        #Если запрос last_price вернул цену 0,
-                        #то запросим цену на момент закрытия торгов по инструменту
+                        '''Если запрос last_price вернул цену 0,
+                        то запросим цену на момент закрытия торгов по инструменту
+                        '''
                         request  =  MarketDataService()
                         close_price_response  =  request.get_close_prices_request(quote["figi"])
                         close_price = close_price_response.close_prices
-                        log.debug(f'[{__name__}] update_quotes() -> price in last_price_json_list instrument_figi {quote["figi"]}: close_price = {close_price} ')
+                        # log_main.debug(f'[{__name__}] update_quotes() -> price in last_price_json_list instrument_figi {quote["figi"]}: close_price = {close_price} ')
                         price = converter.tink_quotation_to_float(close_price[0].price)
 
 
@@ -470,23 +509,23 @@ class InvestLog_v2(QMainWindow):
                             bond_obj = instrument_request.get_bond_by_figi(quote["figi"])
                             bond_nominal = converter.tink_quotation_to_float(bond_obj.instrument.nominal)
                             bond_nkd = converter.tink_quotation_to_float(bond_obj.instrument.aci_value)
-                            log.debug(f'[{__name__}] update_quotes() -> bond_nominal = {bond_nominal}, bond_nkd = {bond_nkd}')
+                            log_main.debug(f'[{__name__}] update_quotes() -> bond_nominal = {bond_nominal}, bond_nkd = {bond_nkd}')
                             price = bond_nominal*(price/100)+bond_nkd
                             price = round(price,2)
                     except:
-                        log.error(f'[{__name__}] update_quotes() -> ошибка получения значения из таблицы positions_table', exc_info=True)
+                        log_main.error(f'[{__name__}] update_quotes() -> ошибка получения значения из таблицы positions_table', exc_info=True)
                     try:
                         except_currency_list = ['RUB', 'rub']
                         if self.ui.positions_table.item(i, 5).text() not in except_currency_list:
                             currency_table_id = self.ui.positions_table.item(i, 5).text()
-                            log.debug(f'[{__name__}] update_quotes() -> в таблице позиций найден инструмент {self.ui.positions_table.item(i, 0).text()} в валюте {currency_table_id}')
+                            log_main.debug(f'[{__name__}] update_quotes() -> в таблице позиций найден инструмент {self.ui.positions_table.item(i, 0).text()} в валюте {currency_table_id}')
                             #Получаем актуальную цену валюты из временного файла
                             currency_price = self.get_currency_price(currency_table_id)
                             currency_price = float(currency_price.replace(',','.'))
-                            log.debug(f'[{__name__}] update_quotes() -> Для подсчета стоимости актива применяется котировка {currency_table_id}/RUB {currency_price}')
+                            log_main.debug(f'[{__name__}] update_quotes() -> Для подсчета стоимости актива применяется котировка {currency_table_id}/RUB {currency_price}')
                             price = round(price*currency_price,2)
                     except:
-                        log.error(f'[{__name__}] update_quotes() -> ошибка получения значения из таблицы positions_table', exc_info=True)
+                        log_main.error(f'[{__name__}] update_quotes() -> ошибка получения значения из таблицы positions_table', exc_info=True)
 
                     item_quote  =  QTableWidgetItem(str(price))
                     self.ui.positions_table.setItem(i, 4, item_quote)
@@ -499,12 +538,12 @@ class InvestLog_v2(QMainWindow):
         '''
         try:
             qty = self.ui.positions_table.item(row_number, 3).text()
-            search_patern = '[-+]?\d+'    #патерн поиска любых цифр в строке
+            search_patern = '[-+]?\\d+'    #патерн поиска любых цифр в строке
             match = re.search(search_patern,qty)
             qty = int(match[0])
         except:
             qty=0
-            log.error(f'[{__name__}] update_quotes() -> ошибка получения значения из таблицы positions_table', exc_info=True)
+            log_main.error(f'[{__name__}] update_quotes() -> ошибка получения значения из таблицы positions_table', exc_info=True)
         return qty
 
     def get_all_assets_price(self):
@@ -515,7 +554,11 @@ class InvestLog_v2(QMainWindow):
         total_money = 0
         for i in range(row_amount):
             qty = self.get_instrument_qty(i)
-            price = self.ui.positions_table.item(i, 4).text()
+            try:
+                price = self.ui.positions_table.item(i, 4).text()
+            except Exception:
+                price = 1
+                log_main.error('Ошибка получения цены инструмента', exc_info=True)
             price = float(price)
 
             total_money_by_instrument = qty*price
@@ -545,7 +588,12 @@ class InvestLog_v2(QMainWindow):
         str_time = last_update.strftime("%d.%m.%Y %H:%M")
         self.ui.last_update_lable.setText(f'Последнее обновление {str_time}')
         positions_info = positions_storage['positions_info']
-        main_window_positions_list = temp_data_util.get_normalized_positions_list(positions_info)
+        positions_list = temp_data_util.get_normalized_positions_list(positions_info)
+        currencies_list = temp_data_util.get_currencies_positions_list(positions_info)
+
+        #log_main.debug(f'[{__name__}] update_positions_info() -> currencies_list {currencies_list}')
+
+        main_window_positions_list = positions_list + currencies_list
 
         #Составим список инструментов на всех счетах удалив дубликаты
         # Этот список будет отображаться в таблице позиций
@@ -615,11 +663,15 @@ class InvestLog_v2(QMainWindow):
         '''
         row = self.ui.positions_table.currentRow()
         figi_data = self.ui.positions_table.item(row,0).text()
-        price = self.ui.positions_table.item(row,4).text()
+        try:
+            price = self.ui.positions_table.item(row,4).text()
+        except Exception:
+            price = 1
+            log_main.error('Ошибка получения цены инструмента', exc_info=True)
         currency  = self.ui.positions_table.item(row,5).text()
         if currency.lower()=='rub':
             currency = 'Руб.'
-        log.debug(f'[{__name__}] get_select_item() -> figi_data: {figi_data}\n item price')
+        log_main.debug(f'[{__name__}] get_select_item() -> figi_data: {figi_data}\n item price')
 
         _, positions_storage = temp_data_util.get_stored_data(self.temp_file)
         positions_info = positions_storage['positions_info']

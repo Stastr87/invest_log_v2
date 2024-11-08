@@ -10,13 +10,14 @@ import os
 from data_processing.data_processing_lib import DataProcessing
 from db_integration import DBIntegration
 from sql_lib.script_normalizer import ScriptNormalizer
-
-
-import temp_data_util
 import config
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'chart.log')
+# import temp_data_util
+#
+# from  my_logger import MyLogger
+# logger_config = config.get_logger_config()
+# log_file = logger_config['chart']
+# log = MyLogger(log_file).new_logger
 
 class MyChart(object):
     def __init__(self,data,y_info):
@@ -26,7 +27,7 @@ class MyChart(object):
         self.temp_file = os.path.abspath(os.path.join(*path))
         if not os.path.exists(self.temp_file):
             os.makedirs(self.temp_file)
-        log.debug(f'[{__name__}] [MyChart] class is initialized...')
+        # log.debug(f'[{__name__}] [MyChart] class is initialized...')
 
     def draw_bond_line_chart(self):
         '''Возвращает объект линейного графика plotly
@@ -63,7 +64,7 @@ class MyChart(object):
         #НЕОБХОДИМО ПЕРЕДАВАТЬ ЗНАЧЕНИЕ НОМИНАЛА ДЛЯ ПОСТРОЕНИЯ ГРАФИКА
         nominal = 1000
         average_buy, average_sell = self.get_average_prices()
-        log.debug(f'[{__name__}] -> [draw_bond_line_chart()] -> average_buy, average_sell: {average_buy, average_sell}')
+        # log.debug(f'[{__name__}] -> [draw_bond_line_chart()] -> average_buy, average_sell: {average_buy, average_sell}')
         if average_buy:
             fig.add_hline(y=average_buy/nominal, line_color="green", line_width=1)
         if average_sell:
@@ -103,7 +104,7 @@ class MyChart(object):
 
         #Добавим линии средних цен
         average_buy, average_sell = self.get_average_prices()
-        log.debug(f'[{__name__}] -> [draw_bond_line_chart()] -> average_buy, average_sell: {average_buy, average_sell}')
+        # log.debug(f'[{__name__}] -> [draw_bond_line_chart()] -> average_buy, average_sell: {average_buy, average_sell}')
         if average_buy:
             fig.add_hline(y=average_buy, line_color="green", line_width=1)
         if average_sell:
@@ -116,7 +117,7 @@ class MyChart(object):
         figi = self.data[0]
         start_date = self.data[1]
         end_date = self.data[2]
-        log.debug(f'{__name__} -> draw_candle_chart() -> start_date: {start_date}, end_date: {end_date}')
+        # log.debug(f'{__name__} -> draw_candle_chart() -> start_date: {start_date}, end_date: {end_date}')
         data = DataProcessing(figi, start_date, end_date)
         raw_data_frame = data.get_local_stored_data()
 
@@ -170,7 +171,7 @@ class MyChart(object):
 
         #Добавим линии средних цен
         average_buy, average_sell = self.get_average_prices()
-        log.debug(f'[{__name__}] -> [draw_bond_line_chart()] -> average_buy, average_sell: {average_buy, average_sell}')
+        # log.debug(f'[{__name__}] -> [draw_bond_line_chart()] -> average_buy, average_sell: {average_buy, average_sell}')
 
         if average_buy:
             axes.axhline(y=average_buy, linestyle='--', linewidth=0.9, color='#005c2b')
@@ -274,12 +275,14 @@ class MyChart(object):
             axes.axhline(y=average_buy, linestyle='--', linewidth=0.9, color='#005c2b')
             #axes.text(x[0],average_buy,str(f'{round(average_buy,2)}  '), color='#005c2b', ha="right", va="center")
         except:
-            log.error(f'{__name__} -> draw_line_chart_bond() -> Ошибка построения линии средней цены покупки', exc_info=True)
+            # log.error(f'{__name__} -> draw_line_chart_bond() -> Ошибка построения линии средней цены покупки', exc_info=True)
+            pass
         try:
             axes.axhline(y=average_sell, linestyle='--', linewidth=0.9, color='#b52100')
             #axes.text(x[0],average_sell,str(f'{round(average_sell,2)}  '), color='#b52100', ha="right", va="center")
         except:
-            log.error(f'{__name__} -> draw_line_chart_bond() -> Ошибка построения линии средней цены продажи', exc_info=True)
+            # log.error(f'{__name__} -> draw_line_chart_bond() -> Ошибка построения линии средней цены продажи', exc_info=True)
+            pass
 
         #Добавим легенду на график
         legend_patch_list=[]
@@ -353,7 +356,7 @@ class MyChart(object):
         figi = self.data[0]
         start_date = self.data[1]
         end_date = self.data[2]
-        log.debug(f'{__name__} -> draw_candle_chart() -> start_date: {start_date}, end_date: {end_date}')
+        # log.debug(f'{__name__} -> draw_candle_chart() -> start_date: {start_date}, end_date: {end_date}')
         data = DataProcessing(figi, start_date, end_date)
         raw_data_frame = data.get_local_stored_data()
 

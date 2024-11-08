@@ -8,8 +8,12 @@ from ui.ui_transaction_form import Ui_Dialog
 from db_integration import DBIntegration
 from sql_lib.script_normalizer import ScriptNormalizer
 
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'transaction_window.log')
+# import config
+# from  my_logger import MyLogger
+# logger_config = config.get_logger_config()
+# log_file = logger_config['transaction_window']
+# log = MyLogger(log_file).new_logger
+
 
 class TransactionWindow(QDialog):
     def __init__(self):
@@ -74,7 +78,7 @@ class TransactionWindow(QDialog):
 
         search_template={"brocker_name":f"{self.ui.Brocker.currentText()}"}
         sql_query=ScriptNormalizer("accounts").select(LIKE=search_template)
-        log.debug(f'{__name__}. {sql_query}')
+        # log.debug(f'{__name__}. {sql_query}')
 
         #Создание подключения к БД
         db_connection=DBIntegration()
@@ -95,12 +99,12 @@ class TransactionWindow(QDialog):
         search_template={"ticker":self.ui.ticker_edit.text()}
         #Создаем запрос к БД
         sql_query=ScriptNormalizer("instruments").select(LIKE=search_template)
-        log.debug(f'{__name__} -> get_instrument_all_data() -> sql_query: {sql_query}')
+        # log.debug(f'{__name__} -> get_instrument_all_data() -> sql_query: {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.debug(f'{__name__} -> get_instrument_all_data() -> data: {data}')
+        # log.debug(f'{__name__} -> get_instrument_all_data() -> data: {data}')
         self.ui.Currency.setText(data[0][8])
         self.ui.Currency.setReadOnly(True)
 
@@ -117,7 +121,7 @@ class TransactionWindow(QDialog):
         limit=100
         #Создаем запрос к БД
         sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list, ORDER=order)
-        log.debug(f'{__name__} -> get_instruments_list() -> sql_query: {sql_query}')
+        # log.debug(f'{__name__} -> get_instruments_list() -> sql_query: {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
@@ -137,19 +141,19 @@ class TransactionWindow(QDialog):
         search_template={"ticker_name":self.ui.instrument_name.text()}
         #Создаем запрос к БД
         sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list, LIKE=search_template)
-        log.info(f'{__name__}. {sql_query}')
+        # log.info(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.debug(f'{__name__}.data: {data}')
+        # log.debug(f'{__name__}.data: {data}')
 
         ticker_tupl=data[0]
         ticker=ticker_tupl[0]
         instrument_type=ticker_tupl[1]
         if instrument_type!='Bond':
             self.ui.nkd_edit.setEnabled(False)
-        log.info(f'{__name__}.ticker: {ticker}')
+        # log.info(f'{__name__}.ticker: {ticker}')
         self.ui.ticker_edit.setText(ticker)
         self.nkd = QLineEdit()
 
@@ -164,16 +168,16 @@ class TransactionWindow(QDialog):
         limit=100
         #Создаем запрос к БД
         sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list, ORDER=order, LIKE=search_template)
-        log.info(f'{__name__}. {sql_query}')
+        # log.info(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.info(f'{__name__}.data: {data}')
+        # log.info(f'{__name__}.data: {data}')
 
         instrument_name_tupl=data[0]
         instrument_name=instrument_name_tupl[0]
-        log.info(f'{__name__}.instrument_name: {instrument_name}')
+        # log.info(f'{__name__}.instrument_name: {instrument_name}')
         self.ui.instrument_name.setText(instrument_name)
 
 
@@ -182,23 +186,23 @@ class TransactionWindow(QDialog):
         search_template={"ticker":ticker}
         #Создаем запрос к БД
         sql_query=ScriptNormalizer("instruments").select(LIKE=search_template)
-        log.debug(f'{__name__}. {sql_query}')
+        # log.debug(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.debug(f'{__name__}.data: {data}')
+        # log.debug(f'{__name__}.data: {data}')
         return data[0][0]
 
     def get_account_id(self,account_name):
         search_template={"account_name":account_name}
         sql_query=ScriptNormalizer("accounts").select(LIKE=search_template)
-        log.debug(f'{__name__}. {sql_query}')
+        # log.debug(f'{__name__}. {sql_query}')
         #Создание подключения к БД
         db_connection=DBIntegration()
         #Отправка запроса
         data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        log.debug(f'{__name__}.data: {data}')
+        # log.debug(f'{__name__}.data: {data}')
         return data[0][0]
 
 
@@ -251,16 +255,16 @@ class TransactionWindow(QDialog):
         #    file.write(json.dumps(data, ensure_ascii=False,indent=4))
 
         sender = self.sender()
-        log.debug(f'btn "{sender.text()}" Clicked!')
+        # log.debug(f'btn "{sender.text()}" Clicked!')
         label_text=self.ui.label.text()
-        log.debug(f'{__name__} -> save_data() -> self.ui.label.text(): {self.ui.label.text()}')
+        # log.debug(f'{__name__} -> save_data() -> self.ui.label.text(): {self.ui.label.text()}')
         if "Добавить сведения об операции" in label_text:
             sql_query=ScriptNormalizer("transactions", new_data=data).insert()
             db_connection=DBIntegration()
             DBIntegration.script_executer_with_commit(db_connection,sql_query)
         if "Редактировать сведения об операции" in label_text:
             transaction_id=label_text[38:]
-            log.debug(f'{__name__} -> transaction_id: {transaction_id}')
+            # log.debug(f'{__name__} -> transaction_id: {transaction_id}')
             sql_query=ScriptNormalizer("transactions", new_data=data).update(WHERE={'transaction_id':transaction_id})
             db_connection=DBIntegration()
             DBIntegration.script_executer_with_commit(db_connection,sql_query)

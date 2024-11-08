@@ -1,0 +1,16 @@
+[2024-09-09 00:14:25,136] [INFO] MyTestClass Started
+[2024-09-09 00:14:25,574] [INFO] instrements_service_test() -> GET some data from T service... type(data): <class 'list'>
+[2024-09-09 00:14:25,575] [INFO] operations_service_test() -> GET some data from T service... type(data): <class 'str'>
+[2024-09-09 00:14:25,575] [INFO] MyTestClass Finished
+[2024-09-09 00:17:33,927] [INFO] MyTestClass Started
+[2024-09-09 00:17:34,421] [INFO] instrements_service_test() -> GET some data from T service... type(data): <class 'list'>
+[2024-09-09 00:17:34,422] [INFO] operations_service_test() -> GET some data from T service... type(data): <class 'str'>
+[2024-09-09 00:17:34,422] [INFO] MyTestClass Finished
+[2024-09-09 00:19:20,155] [INFO] MyTestClass Started
+[2024-09-09 00:19:20,603] [INFO] instrements_service_test() -> GET some data from T service... type(data): <class 'list'>
+[2024-09-09 00:19:20,604] [INFO] operations_service_test() -> GET some data from T service... type(data): <class 'str'>
+[2024-09-09 00:19:20,604] [INFO] MyTestClass Finished
+[2024-09-10 00:53:12,039] [INFO] MyTestClass Started
+[2024-09-10 00:53:12,376] [INFO] instrements_service_test() -> GET some data from T service... type(data): <class 'list'>
+[2024-09-10 00:53:12,377] [INFO] operations_service_test() -> GET some data from T service... type(data): <class 'str'>
+[2024-09-10 00:53:12,377] [INFO] MyTestClass Finished

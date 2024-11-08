@@ -1,50 +1,75 @@
-import time
-import os
-import json
-import psycopg2
+import time, sys, os, psycopg2, logging
+
 import config
-import my_logger
-log = my_logger.setup_applevel_logger(file_name = 'db_integration.log')
+logger_config = config.get_logger_config()
+logger_path = logger_config['path']
+main_log_file = logger_config['db_integration']['name']
+file_mode = logger_config['db_integration']['mode']
+logger_level = logger_config['db_integration']['level']
+# Настройка логирования
+log_db_integration = logging.getLogger(__name__)
+if logger_level.lower() == 'debug':
+    log_db_integration.setLevel(logging.DEBUG)
+if logger_level.lower() == 'error':
+    log_db_integration.setLevel(logging.ERROR)
+if logger_level.lower() == 'info':
+    log_db_integration.setLevel(logging.INFO)
+if logger_level.lower() == 'warning':
+    log_db_integration.setLevel(logging.WARNING)
+if logger_level.lower() == 'critical':
+    log_db_integration.setLevel(logging.CRITICAL)
+if logger_level == None:
+    log_db_integration.setLevel(logging.NOTSET)
+formatter = logging.Formatter(u"[%(asctime)s] [%(levelname)s] %(message)s")
+sh = logging.StreamHandler(sys.stdout)
+sh.setFormatter(formatter)
+fh = logging.FileHandler(filename=os.path.join(logger_path, main_log_file), mode=file_mode, encoding='utf-8')
+fh.setFormatter(formatter)
+log_db_integration.handlers.clear()
+log_db_integration.addHandler(sh)
+log_db_integration.addHandler(fh)
+
+
 
 class DBIntegration:
     '''Класс описывающий взаимодействие с БД
     '''
     def __init__(self):
-        self.db,self.user,self.password,self.host,self.port=self.get_config()
+        db_config = config.get_config()
+        self.db = db_config['database']
+        self.user = db_config['db_user']
+        self.password = db_config['db_password']
+        self.host = db_config['db_host']
+        self.port = db_config['db_port']
+        self.set_connection()
 
-    def get_config(self):
-        data=config.get_config()
-        return data["database"], data["db_user"], data["db_password"], data["db_host"], data["db_port"]
+    def set_connection(self): ## Функция создания соединения
+        self.connection = psycopg2.connect(database=self.db,
+                                           user=self.user,
+                                           password=self.password,
+                                           host=self.host,
+                                           port=self.port)
+        log_db_integration.debug(f'{__class__} {__name__} -> set_connection() -> Соединене с БД установлено')
 
-    def open_connection(self): ## Функция создания соединения
-        connection = psycopg2.connect(database=self.db,
-                                      user=self.user,
-                                      password=self.password,
-                                      host=self.host,
-                                      port=self.port)
-        #log.debug(f'{__name__} -> open_connection -> Соединене с БД установлено')
-        return connection
-
-    def close_connection(some_connection): ## Функция закрытия соединения c таймером
-        time.sleep(0.5)
-        some_connection.close()
-        #log.debug(f'{__name__} -> close_connection -> Соедиенение с БД закрыто')
-
-    def script_executer_with_commit(self, script): ## Функция запуска скрипта
-        new_connection=DBIntegration.open_connection(self)
-        cur = new_connection.cursor()
+    def script_executer_with_commit(self, script):
+        '''Запускает SQL скрипт
+        '''
+        cur = self.connection.cursor()
         cur.execute(script)
-        new_connection.commit()
-        DBIntegration.close_connection(new_connection)
-
+        self.connection.commit()
 
     def script_executer_with_return_data(self, script):
-        '''Query the database and obtain data as Python objects
+        '''Запускает SQL скрипт. Возвращает данные в результате его выполнения
+
+        Query the database and obtain data as Python objects
         https://www.psycopg.org/docs/usage.html
         '''
-        new_connection=DBIntegration.open_connection(self)
-        cur = new_connection.cursor()
+        cur = self.connection.cursor()
         cur.execute(script)
-        data=cur.fetchall()
-        DBIntegration.close_connection(new_connection)
+        data = cur.fetchall()
         return data
+
+    def __del__(self):
+        time.sleep(0.5)
+        self.connection.close()
+        log_db_integration.debug(f'{__class__} {__name__} -> Соединене с БД закрыто')
