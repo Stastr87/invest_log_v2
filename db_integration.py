@@ -31,7 +31,7 @@ sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
 fh = logging.FileHandler(filename=os.path.join(db_integration_log_path,
                                                db_integration_log_file),
-                         mode=file_mode, 
+                         mode=file_mode,
                          encoding='utf-8')
 fh.setFormatter(formatter)
 log_db_integration.handlers.clear()
@@ -44,7 +44,13 @@ class DBIntegration:
     '''Класс описывающий взаимодействие с БД
     '''
     def __init__(self):
-        db_config = config.get_config()
+        current_config = config.get_config()
+
+        if current_config["use_local_db"]:
+            db_config = current_config["local_db"]
+        else:
+            db_config = current_config["remote_db"]
+
         self.db = db_config['database']
         self.user = db_config['db_user']
         self.password = db_config['db_password']

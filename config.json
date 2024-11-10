@@ -1,9 +1,15 @@
 {
     "temp_file":["temp_data","temp"],
 	"update_timer":300,
-    "database":"InvestLog",
-    "db_user": "postgres",
-    "db_password":"password",
-    "db_host":"127.0.0.1",
-    "db_port":"5432"
+    "use_local_db":true,
+    "local_db":{"database":"InvestLog",
+                "db_user": "postgres",
+                "db_password":"password",
+                "db_host":"127.0.0.1",
+                "db_port":"5432"},
+    "remote_db":{"database":"InvestLog",
+                 "db_user": "postgres",
+                 "db_password":"password",
+                 "db_host":"127.0.0.1",
+                 "db_port":"5432"}
 }

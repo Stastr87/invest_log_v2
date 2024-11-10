@@ -14,7 +14,9 @@ from auth.token import Token
 import config
 logger_config = config.get_logger_config()
 
-if 'wind' in platform.system():
+print(platform.system())
+
+if 'wind' in platform.system().lower():
     history_window_log_path = logger_config['path']
 else:
     history_window_log_path = logger_config['alternative_path']
@@ -42,8 +44,8 @@ if logger_level == None:
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
-fh = logging.FileHandler(filename=os.path.join(history_window_log_path, 
-                                               history_window_log_file), 
+fh = logging.FileHandler(filename=os.path.join(history_window_log_path,
+                                               history_window_log_file),
                          mode=file_mode,
                          encoding='utf-8')
 fh.setFormatter(formatter)
@@ -512,7 +514,7 @@ class HistoryWindow(QWidget):
         '''Функция возвращает действие для сигнала изменения размера окна
         '''
         # Возвращает ширину и высоту элемента
-        get_w_h = lambda object: (object.geometry().getRect()[2], 
+        get_w_h = lambda object: (object.geometry().getRect()[2],
                                   object.geometry().getRect()[3])
         history_w_width, history_w_height = get_w_h(self)
         # Необходио передать начальные размеры главному виджету так как в инициализации окна имеется сигнал

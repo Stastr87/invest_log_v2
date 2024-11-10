@@ -43,7 +43,9 @@ import temp_data_util
 import config
 logger_config = config.get_logger_config()
 
-if 'wind' in platform.system():
+
+
+if 'wind' in platform.system().lower():
     logger_path = logger_config['path']
 else:
     logger_path = logger_config['alternative_path']

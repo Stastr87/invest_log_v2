@@ -10,7 +10,7 @@ from datetime import datetime
 import config
 logger_config = config.get_logger_config()
 
-if 'wind' in platform.system():
+if 'wind' in platform.system().lower():
     operations_service_log_path = logger_config['path']
 else:
     operations_service_log_path = logger_config['alternative_path']
@@ -38,8 +38,8 @@ formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
 fh = logging.FileHandler(filename=os.path.join(operations_service_log_path,
-                                               operations_service_log_file), 
-                                               mode=file_mode, 
+                                               operations_service_log_file),
+                                               mode=file_mode,
                                                encoding='utf-8')
 fh.setFormatter(formatter)
 log_operations_service.handlers.clear()
