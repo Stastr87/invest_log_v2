@@ -7,7 +7,6 @@ from services.operations_service.operations_service import Operations
 from services.accounts_service.accounts_service import Accounts
 from db_integration import DBIntegration
 from sql_lib.script_normalizer import ScriptNormalizer
-from pprint import pprint
 from pathlib import Path
 
 import config
@@ -35,50 +34,67 @@ if logger_level.lower() == 'warning':
     log_data_updater.setLevel(logging.WARNING)
 if logger_level.lower() == 'critical':
     log_data_updater.setLevel(logging.CRITICAL)
-if logger_level == None:
+if not logger_level:
     log_data_updater.setLevel(logging.NOTSET)
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
-fh = logging.FileHandler(filename=os.path.join(data_updater_log_path,
-                                               data_updater_log_file),
-                                               mode=file_mode,
-                                               encoding='utf-8')
+
+log_file_path = str(os.path.join(data_updater_log_path,data_updater_log_file))
+
+fh = logging.FileHandler(filename=log_file_path,
+                         mode=file_mode,
+                         encoding='utf-8')
 fh.setFormatter(formatter)
 log_data_updater.handlers.clear()
 log_data_updater.addHandler(sh)
 log_data_updater.addHandler(fh)
 
+
+def get_local_db_instruments():
+    """Возвращает список инструментов сохраненных в локальной БД
+    """
+    #Столбцы выборки
+    cols_list=["figi"]
+    #Создаем запрос к БД
+    sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list)
+    log_data_updater.debug(f'{__name__} -> get_local_db_instruments() -> sql_query: {sql_query}')
+    #Создание подключения к БД
+    db_connection=DBIntegration()
+    #Отправка запроса
+    data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
+    # log_data_updater.debug(f'{__name__} -> get_local_db_instruments data: {data}')
+    return data
+
+def set_token():
+    token = Token()
+    key = token.access_token
+    return key
+
 class DataUpdater(object):
     def __init__(self):
+        self.token = set_token()
         path = config.get_config()["temp_file"]
-        self.temp_file = os.path.abspath(os.path.join(*path))
+        self.temp_file = os.path.abspath(str(os.path.join(*path)))
         if not os.path.exists(self.temp_file):
             os.makedirs(self.temp_file)
-        self.set_token()
-        self.instruments_service_connection = InstrumentsService(TOKEN=self.token)
+        set_token()
         self.local_stored_instruments = self.get_local_stored_instruments_figi_list()
+        self.instruments_service_connection = InstrumentsService(TOKEN=self.token)
 
-    def set_token(self):
-        token = Token()
-        self.token = token.access_token
-        log_data_updater.debug(f'token {self.token[:10]}')
-
-    def test(self):
-        print('test')
-
-    def get_local_stored_instruments_figi_list(self):
-        '''Получим список инструментов в локальной БД
-        '''
-        db_data = self.get_local_db_instruments()
+    @staticmethod
+    def get_local_stored_instruments_figi_list():
+        """Получим список инструментов в локальной БД
+        """
+        db_data = get_local_db_instruments()
         figi_list = []
         for item in db_data:
             figi_list.append(item[0])
         return figi_list
 
     def update_accounts_in_local_db(self):
-        '''Обновляет список счетов в локальной БД
-        '''
+        """Обновляет список счетов в локальной БД
+        """
         log_data_updater.debug(f'{__name__} -> RUN update_accounts_in_local_db()')
         sql_query=ScriptNormalizer("accounts").select()
         #Создание подключения к БД
@@ -101,9 +117,9 @@ class DataUpdater(object):
                 DBIntegration.script_executer_with_commit(db_connection,sql_query)
 
     def update_positions_in_temp_file(self):
-        '''Метод обновляет временный файл
+        """Метод обновляет временный файл
         актуальными данными по позициям на всех счетах брокера
-        '''
+        """
         log_data_updater.debug(f'{__name__} -> RUN update_positions_in_temp_file()')
         sql_query = ScriptNormalizer("accounts").select()
         #Создание подключения к БД
@@ -121,47 +137,32 @@ class DataUpdater(object):
 
         log_data_updater.debug(f'{__name__} -> update_positions_in_temp_file() -> response_data_list:{response_data_list}')
 
-        curent_time = datetime.datetime.now()
-        positions = {"last_update":curent_time,
+        current_time = datetime.datetime.now()
+        positions = {"last_update":current_time,
                      "positions_info":response_data_list}
 
-        #если временная директория не существует, необходимо ее создать
+        # Если временная директория не существует, необходимо ее создать
         temp_dir = Path(os.path.dirname(self.temp_file))
         if not os.path.isdir(temp_dir):
             os.mkdir(temp_dir)
-        #Сохраним новые данные во временный файл
-        #Откроем временный файл
-        shelveFile = shelve.open(self.temp_file)
-        shelveFile['positions_info'] = positions
-        shelveFile.close()
 
-    def get_local_db_instruments(self):
-        '''Возвращает список инструментов сохраненных в локальной БД
-        '''
-        #Столбцы выборки
-        cols_list=["figi"]
-        #Создаем запрос к БД
-        sql_query=ScriptNormalizer("instruments").select(cols_list=cols_list)
-        log_data_updater.debug(f'{__name__} -> get_local_db_instruments() -> sql_query: {sql_query}')
-        #Создание подключения к БД
-        db_connection=DBIntegration()
-        #Отправка запроса
-        data=DBIntegration.script_executer_with_return_data(db_connection,sql_query)
-        # log_data_updater.debug(f'{__name__} -> get_local_db_instruments data: {data}')
-        return data
+        # Сохраним новые данные во временный файл
+        shelve_file = shelve.open(self.temp_file)
+        shelve_file['positions_info'] = positions
+        shelve_file.close()
 
-    def update_temp_file_with_curriencies(self):
-        '''Метод Обновляет котировки валюты в локальном файле
+    def update_temp_file_with_currencies(self):
+        """Метод Обновляет котировки валюты в локальном файле
         для прикладных нужд по следующему списку:
         "BBG0013HGFT4" - USD/RUB
-        '''
-        log_data_updater.debug(f'{__name__} -> RUN update_temp_file_with_curriencies()')
+        """
+        log_data_updater.debug(f'{__name__} -> RUN update_temp_file_with_currencies()')
         request = MarketDataService(TOKEN=self.token)
         request.update_local_currencies()
 
     def update_db_with_new_shares(self):
-        '''Обновляет локальную БД новыми инструментами типа stock
-        '''
+        """Обновляет локальную БД новыми инструментами типа stock
+        """
         #Получим актуальный список акций доступных на рынке
         shares_list=self.instruments_service_connection.get_shares_list()
         #Обновим БД если окажется что инструмента нет в локальной БД
@@ -183,8 +184,8 @@ class DataUpdater(object):
                 DBIntegration.script_executer_with_commit(db_connection,sql_query)
 
     def update_db_with_new_bonds(self):
-        '''Обновляет локальную БД новыми инструментами типа bond
-        '''
+        """Обновляет локальную БД новыми инструментами типа bond
+        """
         #Получим актуальный список облигаций доступных на рынке
         bond_list = self.instruments_service_connection.get_bonds_list()
         #Обновим БД если окажется что инструмента нет в локальной БД
@@ -207,8 +208,8 @@ class DataUpdater(object):
                 DBIntegration.script_executer_with_commit(db_connection,sql_query)
 
     def update_db_with_new_etf(self):
-        '''Обновляет локальную БД новыми инструментами типа ETF
-        '''
+        """Обновляет локальную БД новыми инструментами типа ETF
+        """
         #Получим актуальный список фондов доступных на рынке
         etf_list = self.instruments_service_connection.get_etf_list()
         #Обновим БД если окажется что инструмента нет в локальной БД
@@ -230,8 +231,8 @@ class DataUpdater(object):
                 DBIntegration.script_executer_with_commit(db_connection,sql_query)
 
     def update_db_with_new_currencies (self):
-        '''Обновляет локальную БД новыми инструментами типа currency
-        '''
+        """Обновляет локальную БД новыми инструментами типа currency
+        """
         #Получим актуальный список фондов доступных на рынке
         currency_list = self.instruments_service_connection.get_currencies_list()
         log_data_updater.info(f'{__name__} -> update_db_with_new_currencies() -> currency_list: {currency_list[:10]}')
@@ -260,7 +261,7 @@ if __name__ == '__main__':
     while True:
         try:
             data_updater.update_positions_in_temp_file()
-            data_updater.update_temp_file_with_curriencies()
+            data_updater.update_temp_file_with_currencies()
             data_updater.update_accounts_in_local_db()
             data_updater.update_db_with_new_shares()
             data_updater.update_db_with_new_bonds()

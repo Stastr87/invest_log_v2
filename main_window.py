@@ -1,7 +1,5 @@
 #Standart module import
-# from turtle import position
-from locale import currency
-import config
+
 import sys
 import re
 import os
@@ -13,22 +11,15 @@ from datetime import timedelta
 #UI import section
 import matplotlib as mpl
 mpl.use('QtAgg')
-import matplotlib.pyplot as plt
-#from PyQt6 import QtCore, QtGui, QtWidgets
-from PySide6.QtGui import QAction, QCursor
 from PySide6.QtCore import QTimer, QDate, Qt, Signal
 from PySide6.QtWidgets import (QApplication,
                                QMainWindow,
                                QTableWidgetItem,
-                               QMenu,
-                               QVBoxLayout,
-                               QDateTimeEdit)
+                               QMenu)
 from ui.ui_main_window import Ui_MainWindow
 from history_window import HistoryWindow
 from test_panel import TestPanel_Window
 from instrument_card_window import BondInstrumentCardWindow, ShareInstrumentCardWindow, EtfInstrumentCardWindow
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.figure import Figure
 
 #Services import
 
@@ -37,7 +28,6 @@ from services.instruments_service.instruments_service import InstrumentsService
 from db_integration import DBIntegration
 from sql_lib.script_normalizer import ScriptNormalizer
 from services.data_converter import DataConverter
-from data_processing.data_processing_lib import DataProcessing
 import temp_data_util
 
 import config
@@ -67,15 +57,17 @@ if logger_level.lower() == 'warning':
     log_main.setLevel(logging.WARNING)
 if logger_level.lower() == 'critical':
     log_main.setLevel(logging.CRITICAL)
-if logger_level == None:
+if not logger_level:
     log_main.setLevel(logging.NOTSET)
 formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s")
 sh = logging.StreamHandler(sys.stdout)
 sh.setFormatter(formatter)
-fh = logging.FileHandler(filename=os.path.join(logger_path,
-                                               main_log_file),
-                                               mode=file_mode,
-                                               encoding='utf-8')
+
+log_file_path = str(os.path.join(logger_path, main_log_file))
+
+fh = logging.FileHandler(filename=log_file_path,
+                         mode=file_mode,
+                         encoding='utf-8')
 fh.setFormatter(formatter)
 log_main.handlers.clear()
 log_main.addHandler(sh)
@@ -83,7 +75,7 @@ log_main.addHandler(fh)
 
 converter = DataConverter()
 
-class InvestLog_v2(QMainWindow):
+class InvestLogV2(QMainWindow):
 
     resized = Signal()
     def __init__(self, parent=None):
@@ -92,22 +84,22 @@ class InvestLog_v2(QMainWindow):
         # Для того что бы правильно проинициализировались элементы окна
         # создаются временные директории
         path = config.get_config()["temp_file"]
-        self.temp_file = os.path.abspath(os.path.join(*path))
+        self.temp_file = os.path.abspath(str(os.path.join(*path)))
         if not os.path.exists(self.temp_file):
             os.makedirs(self.temp_file)
 
         #Важная строка для отслеживания изменения размера окна
-        super(InvestLog_v2, self).__init__(parent=parent)
+        super(InvestLogV2, self).__init__(parent=parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.connectUi()
+        self.connect_ui()
 
         #Отслеживание сигналов изменения размера
         self.resized.connect(self.resize_function)
 
         log_main.info(f'[{__name__}] InvestLog_v2 main_window is initialized...')
 
-    def connectUi(self):
+    def connect_ui(self):
         #Изменить имя окна
         self.setWindowTitle("Сводные данные активов")
         #Сформировать интерфейс
@@ -128,7 +120,7 @@ class InvestLog_v2(QMainWindow):
         self.instruments_data_list = self.get_instruments()
         self.accounts_data_list = self.get_accounts()
         #Создать контекстное меню
-        self.context_menu  =  QMenu(self)
+        self.context_menu = QMenu(self)
         action1  =  self.context_menu.addAction("Action 1")
         action2  =  self.context_menu.addAction("Action 2")
         action3  =  self.context_menu.addAction(f"Подробности...")
@@ -138,24 +130,21 @@ class InvestLog_v2(QMainWindow):
         self.update_quotes()
         self.update_total_label()
 
-        #Далее интерфес будет обновляться по таймеру
+        #Далее интерфейс будет обновляться по таймеру
         #Вывод информации по бумагам на всех счетах из временного файла
         update_positions_timer = QTimer(self)
         update_positions_timer.timeout.connect(self.update_positions_info)
         update_positions_timer.start(60000)
 
-        #Обновление которовок по списку бумаг
+        #Обновление котировок по списку бумаг
         update_quotes_timer = QTimer(self)
         update_quotes_timer.timeout.connect(self.update_quotes)
         update_quotes_timer.timeout.connect(self.update_total_label)
         update_quotes_timer.start(60000)
 
-
-
         """Описание сигналов для элементов интерфейса.
         Начало
         """
-
 
         #Действие выбора ячейки в таблице
         self.ui.positions_table.cellClicked.connect(self.get_select_item)
@@ -197,7 +186,8 @@ class InvestLog_v2(QMainWindow):
         log_main.debug(f'{__name__} -> get_selected_instrument_name() -> instrument_name: {instrument_name}')
         return instrument_name
 
-    def get_accounts(self):
+    @staticmethod
+    def get_accounts():
         '''Возвращает из локальной БД
         список словарей вида {"account_id":"account_name"}
         '''
@@ -233,14 +223,17 @@ class InvestLog_v2(QMainWindow):
         return data
 
     def resizeEvent(self, event):
-            '''Действие при изменении размера окна
+        """Действие при изменении размера окна
 
-            DOC: https://doc.qt.io/qtforpython-6/overviews/signalsandslots.html#signals-slots
-            '''
-            self.resized.emit()
-            return super(InvestLog_v2, self).resizeEvent(event)
+        DOC: https://doc.qt.io/qtforpython-6/overviews/signalsandslots.html#signals-slots
+        """
+
+        self.resized.emit()
+        return super(InvestLogV2, self).resizeEvent(event)
+
     """Описание слотов. Начало
     """
+
     def open_table_view(self):
         self.new_window = HistoryWindow()
         self.new_window.show()
@@ -253,11 +246,11 @@ class InvestLog_v2(QMainWindow):
         row = self.ui.positions_table.currentRow()
         figi_data = self.ui.positions_table.item(row,0).text()
         #log.debug(f'{__name__} -> open_instrument_card() -> figi_data: {figi_data}')
-        istrument_type = self.ui.positions_table.item(row,2).text()
+        instrument_type = self.ui.positions_table.item(row,2).text()
         instrument_name = self.ui.positions_table.item(row,1).text()
         instrument_ticker = self.ui.positions_table.item(row,6).text()
 
-        if istrument_type == 'Bond':
+        if instrument_type == 'Bond':
             #Наполнеине интерфейса карточки облигации информацией
             #Получение данных
             instruments_request = InstrumentsService()
@@ -315,7 +308,7 @@ class InvestLog_v2(QMainWindow):
             qdate_end = QDate(end_time_request.year, end_time_request.month, end_time_request.day)
             self.new_window.ui.end_date.setDate(qdate_end)
 
-        if istrument_type == 'Stock':
+        if instrument_type == 'Stock':
             #Наполнеине интерфейса карточки акции информацией
             #Данные для формирования информационного наполнения окна
             price = float(self.ui.positions_table.item(row,4).text())
@@ -331,7 +324,7 @@ class InvestLog_v2(QMainWindow):
             currency = share_info.instrument.currency
             if currency.lower() == 'rub':
                 currency = 'Руб.'
-            #ДАнные для формирования графика
+            #Данные для формирования графика
             end_time_request = datetime.now()
             delta = timedelta(days=365)
             start_time_request = end_time_request - delta
@@ -341,7 +334,7 @@ class InvestLog_v2(QMainWindow):
             #Создать объект нового окна
             self.new_window = ShareInstrumentCardWindow(data, currency)
 
-            #Заполнеине интерфейса данными
+            #Заполнение интерфейса данными
             self.new_window.setWindowTitle(f'Подробности {instrument_name}')
             self.new_window.setModal(False)
             self.new_window.ui.share_instrument_card_label.setText(instrument_name)
@@ -356,7 +349,7 @@ class InvestLog_v2(QMainWindow):
             qdate_end = QDate(end_time_request.year, end_time_request.month, end_time_request.day)
             self.new_window.ui.end_date.setDate(qdate_end)
 
-        if istrument_type == 'Etf':
+        if instrument_type == 'Etf':
             #Наполнеине интерфейса карточки фонда информацией
             #Получение данных
             #figi=self.ui.positions_table.item(row,0).text()
@@ -431,8 +424,6 @@ class InvestLog_v2(QMainWindow):
         #Переписать Функция так что бы дынные возвращались из временного файла
         currency_list_request = InstrumentsService()
         currency_list = currency_list_request.get_currencies()
-
-        currency_list
         currency_figi = None
         for currency in currency_list.instruments:
             if currency.iso_currency_name == currency_id.lower():
@@ -549,8 +540,8 @@ class InvestLog_v2(QMainWindow):
         '''
         try:
             qty = self.ui.positions_table.item(row_number, 3).text()
-            search_patern = '[-+]?\\d+'    #патерн поиска любых цифр в строке
-            match = re.search(search_patern,qty)
+            search_pattern = '[-+]?\\d+'    # паттерн поиска любых цифр в строке
+            match = re.search(search_pattern,qty)
             qty = int(match[0])
         except:
             qty=0
@@ -578,7 +569,7 @@ class InvestLog_v2(QMainWindow):
 
     def update_total_label(self):
         '''Функция подсчитывает сумму средств по всем инструментам
-        и обновляет self.ui.total_maney_value_label
+        и обновляет self.ui.total_money_value_label
         '''
         total_money=self.get_all_assets_price()
         self.ui.total_maney_value_label.setText(str(round(total_money,2)))
@@ -688,18 +679,18 @@ class InvestLog_v2(QMainWindow):
         positions_info = positions_storage['positions_info']
         accounts_table_positions_list = temp_data_util.get_normalized_positions_list(positions_info)
 
-        accouts_list = list()
+        accounts_list = list()
         qty_list = list()
         for item in accounts_table_positions_list:
             if item["figi"] == figi_data:
-                accouts_list.append(item["account_id"])
+                accounts_list.append(item["account_id"])
                 qty_list.append(item["quantity"])
 
-        self.ui.accounts_table.setRowCount(len(accouts_list))
+        self.ui.accounts_table.setRowCount(len(accounts_list))
         self.ui.accounts_table.setColumnCount(4)
         total_account_price_value_list = []
-        for i in range(len(accouts_list)):
-            account_id = accouts_list[i]
+        for i in range(len(accounts_list)):
+            account_id = accounts_list[i]
             qty = qty_list[i]
             item_account  =  QTableWidgetItem(account_id)
             self.ui.accounts_table.setItem(i, 0, item_account)
@@ -707,6 +698,7 @@ class InvestLog_v2(QMainWindow):
             item_quantity.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self.ui.accounts_table.setItem(i, 2, item_quantity)
 
+            account_total_price = None
             for local_db_account_data in self.accounts_data_list:
                 #Получаем список аккаунтов
                 account_id_key_list = [*local_db_account_data]
@@ -749,7 +741,7 @@ class InvestLog_v2(QMainWindow):
         # Возвращает ширину и высоту элемента
         get_w_h = lambda object: (object.geometry().getRect()[2], object.geometry().getRect()[3])
         main_w_width, main_w_height = get_w_h(self)
-        # Необходио передать начальные размеры главному виджету так как в инициализации окна имеется сигнал
+        # Необходимо передать начальные размеры главному виджету так как в инициализации окна имеется сигнал
         # resize который не может быть вызван без изменения размера окна
         self.ui.general_widget.resize(main_w_width-10, main_w_height-50)
         # Исходные размеры элементов окна
@@ -767,6 +759,6 @@ class InvestLog_v2(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = InvestLog_v2()
+    window = InvestLogV2()
     window.show()
     sys.exit(app.exec())
